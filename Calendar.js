@@ -355,8 +355,7 @@ function brebeufDay(enteredDate) {
       if (enteredDate.getTime() == s.getTime()) brebeufDay = null;
     };
     for (e of extendedBreak) {
-      let startDate = new Date(EXTENDED_BREAK[y][0]);
-    let endDate = new Date(EXTENDED_BREAK[y][1]);
+        if (enterDate.getTime() >= e[0].getTime() && enteredDate.getTime() <= e[1].getTime() brebeufDay = null;
     }
     
     if (brebeufDay != null) {
