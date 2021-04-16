@@ -1,11 +1,11 @@
 // GOOGLE AMDIN
 // COURSENUM
-// SPECIAL CLASSES
 // TWO HOUR DELAY
 // SPREADSHEET
 // MARKETPLACE
 // EDIT EVENTS?
 // ONE BUTTON TO END OF SEMESTER
+// DATE TIME PICKER / IRREGULAR CLASSES / HTML INTERFACE
 
 // This program takes data from Google Classroom and user input to create personalized events in Google Calendar according to each user's class times (Help and Feedback options are available in the add-on)
 var userProperties = PropertiesService.getUserProperties();
@@ -256,8 +256,13 @@ function uiForCourse(course) {
   if (subject.period != null) periodNum.setValue(subject.period.toString());
   
   // SUBJECT AND STATUS?
-
-  var irregularClass = newButton("Irregular Class", "irregularClass", "N/A", "status", status);
+  
+  // var irregularClass = newButton("Irregular Class", "irregularClass", "N/A", "status", status);
+  var irregularClass = CardService.newTextButton()
+    .setText("Irregular Class")
+    .setOnClickAction(CardService.newAction()
+      .setFunctionName("irregularClass")
+      .setParameters({status: status}));
 
   var prt = CardService.newSelectionInput()
     .setType(CardService.SelectionInputType.RADIO_BUTTON)
@@ -388,9 +393,7 @@ function updateCourseInfo(e) {
       console.log(err);
       throw err;
     }
-    else {
-      return newNotify("Please make sure all the fields are filled in correctly.");
-    }
+    else return newNotify("Please make sure all the fields are filled in correctly.");
   };
   
   var subject = e.parameters.subject;

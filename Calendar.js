@@ -6,7 +6,6 @@
   // CREATE NEW EVENTS FROM WHEN THE EVENTS CREATED ENDED
   // ERASE PREVIOUSLY CREATED EVENTS (FROM NOW TO PLANNED)
 // LAST SUCCESSFUL
-// GAP
 // GENERATE DATE (POSSIBLE RANGE)
 // HTML
 
@@ -355,7 +354,7 @@ function brebeufDay(enteredDate) {
       if (enteredDate.getTime() == s.getTime()) brebeufDay = null;
     };
     for (e of extendedBreak) {
-        if (enterDate.getTime() >= e[0].getTime() && enteredDate.getTime() <= e[1].getTime() brebeufDay = null;
+        if (enteredDate.getTime() >= e[0].getTime() && enteredDate.getTime() <= e[1].getTime()) brebeufDay = null;
     }
     
     if (brebeufDay != null) {
@@ -374,7 +373,6 @@ function brebeufDay(enteredDate) {
           if (!breakDay) dayCount ++;
         } 
         dayTest.setDate(dayTest.getDate() + 1);
-        
       }
 
       brebeufDay = dayCount % 8;
@@ -397,5 +395,5 @@ function classOrder(n) {
 }
 
 function temporary() {
-  userProperties.deleteProperty("calendarId")
+  userProperties.deleteProperty("calendarId");
 }

@@ -31,24 +31,27 @@ function irregularClass(e) {
   // STRING INSTEAD OF NULL
 
   var status = e.parameters.status;
-  var classInfo = [name, period, prt, lunch, status];
+  var info = [name, period, prt, lunch, status];
+  var classInfo = JSON.stringify(info);
 
   var courseName;
   if (name == null) courseName = "Untitled";
   else courseName = name;
 
-  var explanation = CardService.newTextParagraph()
-    .setText("To set \"" + courseName + "\" as an irregular class, select an option below."+classInfo);
+  const EXPLANATION_TEXT = "To set \"" + courseName + "\" as an irregular class, select an option below.";
+  const EXAMPLE_TEXT = "\n(Irregular class: \nA class that does not meet 5 days per cycle.) \n(Ex. Freshman Seminar, College Counseling Seminar, Community Service, Independent Study, etc.)";
 
-  var periodClass = newButton("Meeting during Class Period", "setPeriodClass", "#761113");
-  var prtClass = newButton("Meeting during PRT", "setPrtClass", "#DEAC3F");
+  var explanation = CardService.newTextParagraph()
+    .setText(EXPLANATION_TEXT);
+
+  var periodClass = newButton("Meeting during Class Period", "setPeriodClass", "#761113", "classInfo", classInfo);
+  var prtClass = newButton("Meeting during PRT", "setPrtClass", "#DEAC3F", "classInfo", classInfo);
   var selection = CardService.newButtonSet()
     .addButton(periodClass)
     .addButton(prtClass);
 
   var example = CardService.newTextParagraph()
-    .setText("\n(Irregular class: \nA class that does not meet 5 days per cycle.) \n(Ex. Freshman Seminar, College Counseling Seminar, Community Service, Independent Study, etc.)");
-
+    .setText(EXAMPLE_TEXT);
 
   var section = CardService.newCardSection()
     .addWidget(explanation)
@@ -56,7 +59,7 @@ function irregularClass(e) {
     .addWidget(example);
     
   var card = CardService.newCardBuilder()
-    .addSection(section)
+    .addSection(section);
 
   return card.build();
 
@@ -229,6 +232,12 @@ function uiForIrregularPeriodClass(course) {
 
 function setPeriodClass(e){
   userProperties.setProperty("courseStateChanged", true);
+  var classInfo = e.parameters.classInfo;
+  if (classInfo == undefined) newNotify("here");
+  // var parseClassInfo = JSON.parse(classInfo);
+  var ifNull = false;
+  // if (parseClassInfo[0] === null) ifNull = true;
+  newNotify(ifNull);
 }
 
 function setPrtClass(e){

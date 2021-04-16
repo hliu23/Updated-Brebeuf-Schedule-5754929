@@ -1,4 +1,5 @@
 // COMMON & IRREGULAR
+// APP SCRIPT -> CLASP -> LOCAL -> GIT -> GITHUBS 
 
 // Return keys of user properties that contain course info
 function chooseCoursesProperties() {
@@ -38,13 +39,14 @@ function getCourseProperties() {
  * @param {String} key Optional key for a parameter of the function
  * @param {} value Option value for a parameter of the function
  */
+// NOT WORKING?
 function newButton(text, fnName, color, key = undefined, value = undefined) {
   var action = CardService.newAction()
     .setFunctionName(fnName);
   if (key !== undefined && value !== undefined) {
     // WARNING
     // if (key.length != value.length) console.log("Warning: the numbers of keys and values provided do not match in function " + fnName + "associated with button " + text);
-    action.setParameters({key: value});
+    action.setParameters({key: value.toString()});
   }
 
   var button = CardService.newTextButton()
@@ -81,13 +83,17 @@ function test(){
   // Logger.log(testCases(functionalityCheck, 0));
   // Logger.log(functionalityCheck(null));
 
-  let date = new Date("Apr 15 2021");
-  let time = date.getTime();
-  Logger.log(time);
-  Logger.log("here")
+  var li = JSON.stringify([null, null, null]);
+  test2(li);
 
 }
 // DECLARATION
+
+function test2(li) {
+  var lis = JSON.parse(li);
+  if (lis[0] === null) console.log("yes");
+  else console.log("no");
+}
 
 
 
