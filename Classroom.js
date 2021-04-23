@@ -5,7 +5,9 @@
 // MARKETPLACE
 // EDIT EVENTS?
 // ONE BUTTON TO END OF SEMESTER
+// GOOGLE SHEET? SAME TIME EACH CYCLE
 // DATE TIME PICKER / IRREGULAR CLASSES / HTML INTERFACE
+// COLOR CODE / ALT SCHEDULE
 
 // This program takes data from Google Classroom and user input to create personalized events in Google Calendar according to each user's class times (Help and Feedback options are available in the add-on)
 var userProperties = PropertiesService.getUserProperties();
@@ -33,38 +35,41 @@ function toHomePage() {
 
 // Build the homepage of the add-on, which displays all classes stored in user properties and options to retrieve class info from Classroom, create and delete classes, and create events
 function homePage() {
-  var section = CardService.newCardSection();
+  var startSection = CardService.newCardSection();
   
   var initializeButton = newButton("Retrieve Classes from Classroom", "initialize", "#761113");
   var createButton = newButton("Add a Course", "createCourse", "#761113");
 
-  section.addWidget(initializeButton)
+  startSection.addWidget(initializeButton)
     .addWidget(createButton);
 
+  var courseSection = CardService.newCardSection();
   var courseList = sortCourses();
   for (x in courseList) {
     var courseButtonSet = createToCardButtonSet(courseList[x]);
-    section.addWidget(courseButtonSet);
+    courseSection.addWidget(courseButtonSet);
   };
   
+  var calendarSection = CardService.newCardSection();
   var calendarButton = newButton("Create Events in Calendar", "checkEvents", "#DEAC3F");
-  section.addWidget(calendarButton);
+  calendarSection.addWidget(calendarButton);
 
   var card = CardService.newCardBuilder()
     .setName("homePage")
-    .addSection(section);
+    .addSection(startSection)
+    .addSection(courseSection)
+    .addSection(calendarSection);
 
   return card.build();
 }
+
 
 // Retrieve classes from Classroom and save them in user properties
 function initialize() {
   userProperties.setProperty("courseStateChanged", true);
 
   const PARAMS = {method: "get", headers: {Authorization: "Bearer " + ScriptApp.getOAuthToken()}};
-
   var res = UrlFetchApp.fetch("https://classroom.googleapis.com/v1/courses?courseStates=ACTIVE&studentId=me&fields=courses/name", PARAMS);
-
   var response = JSON.parse(res).courses;
 
   if (response.length == 0) {
@@ -264,61 +269,10 @@ function uiForCourse(course) {
       .setFunctionName("irregularClass")
       .setParameters({status: status}));
 
-  var prt = CardService.newSelectionInput()
-    .setType(CardService.SelectionInputType.RADIO_BUTTON)
-    .setTitle("PRT")
-    .setFieldName("prt_input");
-
   const UNSELECTED_OPTION = "No selection found. Select an option.";
 
-  switch (subject.prt) {
-    case ("A"):
-      prt.addItem("A", "A", true)
-      .addItem("B", "B", false)
-      .addItem(UNSELECTED_OPTION, null, false);
-      break;
-    case ("B"): 
-      prt.addItem("A", "A", false)
-      .addItem("B", "B", true)
-      .addItem(UNSELECTED_OPTION, null, false);
-      break;
-    default:
-      prt.addItem("A", "A", false)
-      .addItem("B", "B", false)
-      .addItem(UNSELECTED_OPTION, null, true);
-      break;
-  } 
-    
-  var lunch = CardService.newSelectionInput()
-    .setType(CardService.SelectionInputType.RADIO_BUTTON)
-    .setTitle("Lunch")
-    .setFieldName("lunch_input");
-  switch (subject.lunch) {
-    case ("A"):
-      lunch.addItem("A", "A", true)
-      .addItem("B", "B", false)
-      .addItem("C", "B", false)
-      .addItem(UNSELECTED_OPTION, null, false);
-      break;
-    case ("B"):
-      lunch.addItem("A", "A", false)
-      .addItem("B", "B", true)
-      .addItem("C", "C", false)
-      .addItem(UNSELECTED_OPTION, null, false);
-      break;
-    case ("C"):
-      lunch.addItem("A", "A", false)
-      .addItem("B", "B", false)
-      .addItem("C", "C", true)
-      .addItem(UNSELECTED_OPTION, null, false);
-      break;
-    default:
-      lunch.addItem("A", "A", false)
-      .addItem("B", "B", false)
-      .addItem("C", "C", false)
-      .addItem(UNSELECTED_OPTION, null, true);
-      break;
-  }
+  var prt = prtOptions(UNSELECTED_OPTION, subject.prt);
+  var lunch = lunchOptions(UNSELECTED_OPTION, subject.lunch);
 
   // TO STRING
   
@@ -329,7 +283,6 @@ function uiForCourse(course) {
     .setOnClickAction(CardService.newAction()
       .setFunctionName("updateCourseInfo")
       .setParameters({subject: subject.name, status: status}));
-
 
   var deleteButton = CardService.newTextButton()
     .setText("Delete Course")

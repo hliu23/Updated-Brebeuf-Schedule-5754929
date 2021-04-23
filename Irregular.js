@@ -31,8 +31,8 @@ function irregularClass(e) {
   // STRING INSTEAD OF NULL
 
   var status = e.parameters.status;
-  var info = [name, period, prt, lunch, status];
-  var classInfo = JSON.stringify(info);
+  var classInfo = [name, period, prt, lunch, status];
+
 
   var courseName;
   if (name == null) courseName = "Untitled";
@@ -44,8 +44,22 @@ function irregularClass(e) {
   var explanation = CardService.newTextParagraph()
     .setText(EXPLANATION_TEXT);
 
-  var periodClass = newButton("Meeting during Class Period", "setPeriodClass", "#761113", "classInfo", classInfo);
-  var prtClass = newButton("Meeting during PRT", "setPrtClass", "#DEAC3F", "classInfo", classInfo);
+  var periodClass = CardService.newTextButton()
+    .setText("Meeting during Class Period")
+    .setOnClickAction(CardService.newAction()
+      .setFunctionName("setPeriodClass")
+      .setParameters({classInfo: JSON.stringify(classInfo)}))
+    .setTextButtonStyle(CardService.TextButtonStyle.FILLED)
+    .setBackgroundColor("#761113");
+
+   var prtClass = CardService.newTextButton()
+    .setText("Meeting during PRT")
+    .setOnClickAction(CardService.newAction()
+      .setFunctionName("setPrtClass")
+      .setParameters({classInfo: JSON.stringify(classInfo)}))
+    .setTextButtonStyle(CardService.TextButtonStyle.FILLED)
+    .setBackgroundColor("#DEAC3F");
+  
   var selection = CardService.newButtonSet()
     .addButton(periodClass)
     .addButton(prtClass);
@@ -110,6 +124,32 @@ function updateIncompleteCourseInfo(e) {
     .build();
 }
 
+function setPeriodClass(e) {
+  // userProperties.setProperty("courseStateChanged", true);
+  var classInfo = e.parameters.classInfo;
+  var classInfo = JSON.parse(classInfo);
+  var subject = new Subject(classInfo[0], classInfo[1], classInfo[2], classInfo[3]);
+  var status = classInfo[4];
+
+  const UNSELECTED_OPTION = "N/A";
+
+  var prt = prtOptions(UNSELECTED_OPTION, subject.prt);
+  var lunch = lunchOptions(UNSELECTED_OPTION, subject.lunch);
+
+  var section = CardService.newCardSection()
+    .addWidget(prt)
+    .addWidget(lunch)
+
+  var card = CardService.newCardBuilder()
+    .addSection(section);
+  
+  return card.build();
+}
+
+function setPrtClass(e) {
+  userProperties.setProperty("courseStateChanged", true);
+}
+
 // day, period, prt, lunch
 // day, morning? prt
 
@@ -135,61 +175,7 @@ function uiForIrregularPeriodClass(course) {
       .setFunctionName("irregularClass")
       .setParameters({courseName: subject.name}));
 
-  var prt = CardService.newSelectionInput()
-    .setType(CardService.SelectionInputType.RADIO_BUTTON)
-    .setTitle("PRT")
-    .setFieldName("prt_input");
-
-  const unselectedOption = "No selection found. Select an option.";
-
-  switch (subject.prt) {
-    case ("A"):
-      prt.addItem("A", "A", true)
-      .addItem("B", "B", false)
-      .addItem(unselectedOption, null, false);
-      break;
-    case ("B"): 
-      prt.addItem("A", "A", false)
-      .addItem("B", "B", true)
-      .addItem(unselectedOption, null, false);
-      break;
-    default:
-      prt.addItem("A", "A", false)
-      .addItem("B", "B", false)
-      .addItem(unselectedOption, null, true);
-      break;
-  } 
-    
-  var lunch = CardService.newSelectionInput()
-    .setType(CardService.SelectionInputType.RADIO_BUTTON)
-    .setTitle("Lunch")
-    .setFieldName("lunch_input");
-  switch (subject.lunch) {
-    case ("A"):
-      lunch.addItem("A", "A", true)
-      .addItem("B", "B", false)
-      .addItem("C", "B", false)
-      .addItem(unselectedOption, null, false);
-      break;
-    case ("B"):
-      lunch.addItem("A", "A", false)
-      .addItem("B", "B", true)
-      .addItem("C", "C", false)
-      .addItem(unselectedOption, null, false);
-      break;
-    case ("C"):
-      lunch.addItem("A", "A", false)
-      .addItem("B", "B", false)
-      .addItem("C", "C", true)
-      .addItem(unselectedOption, null, false);
-      break;
-    default:
-      lunch.addItem("A", "A", false)
-      .addItem("B", "B", false)
-      .addItem("C", "C", false)
-      .addItem(unselectedOption, null, true);
-    break;
-  }
+  
 
   if (course == null) status = "!nullnullnullnullnullnullnullnullnullnull!";
   else status = course.toString();
@@ -230,16 +216,4 @@ function uiForIrregularPeriodClass(course) {
   return card.build();
 }
 
-function setPeriodClass(e){
-  userProperties.setProperty("courseStateChanged", true);
-  var classInfo = e.parameters.classInfo;
-  if (classInfo == undefined) newNotify("here");
-  // var parseClassInfo = JSON.parse(classInfo);
-  var ifNull = false;
-  // if (parseClassInfo[0] === null) ifNull = true;
-  newNotify(ifNull);
-}
 
-function setPrtClass(e){
-  userProperties.setProperty("courseStateChanged", true);
-}

@@ -1,5 +1,5 @@
 // Date => Brebeuf Day => Classes that Day => PRT and Lunch => Fit back to Schedule
-// SKIP THE SUMMER
+
 // LAST CHANGED
 // OPTION ASK: YOU HAVE MADE SOME CHANGES: CREATE NEW EVENTS STARTING NOW? 
   // CREATE NEW EVENTS FROM NOW
@@ -7,7 +7,6 @@
   // ERASE PREVIOUSLY CREATED EVENTS (FROM NOW TO PLANNED)
 // LAST SUCCESSFUL
 // GENERATE DATE (POSSIBLE RANGE)
-// HTML
 
 var requests = [];
 
@@ -324,10 +323,11 @@ function brebeufDay(enteredDate) {
 
   const DAY_ONE = new Date("Feb 9, 2021");
   const SPECIAL_DAY = ["Feb 15, 2021", "Mar 15, 2021", "Mar 22, 2021", "Mar 23, 2021", "Mar 24, 2021", "Mar 25, 2021", "Mar 26, 2021", "Apr 2, 2021", "Apr 5, 2021"];
-  const EXTENDED_BREAK = [["May 19, 2021", "Aug 4, 2021"]];
+  const EXTENDED_BREAK = [["May 19, 2021", "Aug 5, 2021"]];
   // OFF TIMES
   // INCLUDE, INCLUDE
   // CHECK DATE
+  // SKIPPING FIRST DATE
 
   var specialDays = [];
   var extendedBreak = [];
@@ -340,7 +340,6 @@ function brebeufDay(enteredDate) {
     extendedBreak[y] = [startDate, endDate];
   }
   // LIST IN TIME AND DELETE?
-  // 
 
   
   var brebeufDay = 0;

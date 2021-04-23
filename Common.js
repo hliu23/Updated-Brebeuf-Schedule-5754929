@@ -67,35 +67,72 @@ function newNotify(text) {
     .build();
 }
 
+function prtOptions(unselectedOption, prtVal) {
+  const UNSELECTED_OPTION = unselectedOption;
 
-// function functionalityCheck() {
-//   return 0;
-// }
+  var prt = CardService.newSelectionInput()
+    .setType(CardService.SelectionInputType.RADIO_BUTTON)
+    .setTitle("PRT")
+    .setFieldName("prt_input");
 
-// function testCases(func, input = null, expectedResults) {
-//   var returnVal = func(input);
-//   var success = false;
-//   if (returnVal == expectedResults) success = true;
-//   return success;
-// }
+  switch (prtVal) {
+    case ("A"):
+      prt.addItem("A", "A", true)
+      .addItem("B", "B", false)
+      .addItem(UNSELECTED_OPTION, null, false);
+      break;
+    case ("B"): 
+      prt.addItem("A", "A", false)
+      .addItem("B", "B", true)
+      .addItem(UNSELECTED_OPTION, null, false);
+      break;
+    default:
+      prt.addItem("A", "A", false)
+      .addItem("B", "B", false)
+      .addItem(UNSELECTED_OPTION, null, true);
+      break;
+  } 
 
-function test(){
-  // Logger.log(testCases(functionalityCheck, 0));
-  // Logger.log(functionalityCheck(null));
-
-  var li = JSON.stringify([null, null, null]);
-  test2(li);
-
+  return prt;
 }
-// DECLARATION
 
-function test2(li) {
-  var lis = JSON.parse(li);
-  if (lis[0] === null) console.log("yes");
-  else console.log("no");
+function lunchOptions(unselectedOption, lunchVal) {
+  const UNSELECTED_OPTION = unselectedOption;
+
+  var lunch = CardService.newSelectionInput()
+    .setType(CardService.SelectionInputType.RADIO_BUTTON)
+    .setTitle("Lunch")
+    .setFieldName("lunch_input");
+
+  switch (lunchVal) {
+    case ("A"):
+      lunch.addItem("A", "A", true)
+      .addItem("B", "B", false)
+      .addItem("C", "B", false)
+      .addItem(UNSELECTED_OPTION, null, false);
+      break;
+    case ("B"):
+      lunch.addItem("A", "A", false)
+      .addItem("B", "B", true)
+      .addItem("C", "C", false)
+      .addItem(UNSELECTED_OPTION, null, false);
+      break;
+    case ("C"):
+      lunch.addItem("A", "A", false)
+      .addItem("B", "B", false)
+      .addItem("C", "C", true)
+      .addItem(UNSELECTED_OPTION, null, false);
+      break;
+    default:
+      lunch.addItem("A", "A", false)
+      .addItem("B", "B", false)
+      .addItem("C", "C", false)
+      .addItem(UNSELECTED_OPTION, null, true);
+      break;
+  }
+
+  return lunch;
 }
-
-
 
 function deleteUserInfo() {
   userProperties.deleteAllProperties()
