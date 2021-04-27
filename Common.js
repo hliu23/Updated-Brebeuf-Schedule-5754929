@@ -1,4 +1,6 @@
-// COMMON & IRREGULAR
+// 2021.4.27: START FROM filterPreserved() NEXT TIME
+
+// COMMON & IRREGULAR & TEST
 // APP SCRIPT -> CLASP -> LOCAL -> GIT -> GITHUBS 
 
 // Return keys of user properties that contain course info
@@ -7,9 +9,13 @@ function chooseCoursesProperties() {
   var preservedKeys = ["calendarId", "lastCompletedDate", "courseStateChanged"];
 
   function filterPreserved(key) {
-    return !(preservedKeys.includes(key));
+    var keep = !(preservedKeys.includes(key));
+    // ADD NEW PREFIX IN FRONT OF EACH COURSE PROPERTY?
+    // if (key.includes("IRREGULAR")) keep = false;
+    return keep;
   } 
 
+  // FILTER: RETURN TRUE TO KEEP
   var coursePropertiesKeys = userPropertiesKeys.filter(filterPreserved);
   return coursePropertiesKeys;
 }
