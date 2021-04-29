@@ -80,50 +80,6 @@ function irregularClass(e) {
   // CONVERT BACK
 }
 
-// Update course info in user properties according to user input
-function updateIncompleteCourseInfo(e) {
-  userProperties.setProperty("courseStateChanged", true);
-  try {
-    if (period == " ") throw new TypeError;
-    else if (isNaN(period)) throw new TypeError;
-    else if (period < 1 || period > 8) throw new TypeError;
-
-    
-  
-    if (prt == "null" || lunch == "null") throw new TypeError;
-
-  }
-  // Catch TypeError
-  catch (err) {
-    if (err.name !== "TypeError") throw err;
-    else {
-      return CardService.newActionResponseBuilder()
-        .setNotification(CardService.newNotification()
-          .setText("Please make sure all the fields are filled in correctly."))
-      .build();
-    };
-  };
-
-  
-  var subject = e.parameters.subject;
-  var status = e.parameters.status;
-  
-  period = parseInt(period, 10);
-  if (status !== "!nullnullnullnullnullnullnullnullnullnull!") {
-    userProperties.deleteProperty(subject);
-  };
-  
-  var course = new Subject(name, period, prt, lunch);  
-  userProperties.setProperty(course.name, JSON.stringify(course));
-
-  var toHomePage = CardService.newNavigation().popToNamedCard("homePage").updateCard(homePage());
-  return CardService.newActionResponseBuilder()
-    .setNotification(CardService.newNotification()
-      .setText("Changes successfully saved."))
-    .setNavigation(toHomePage)
-    .build();
-}
-
 class Irregular_Period {
   constructor(name, day, period, prt, lunch) {
     this.name = name;
@@ -145,7 +101,7 @@ class Irregular_PRT {
 }
 
 function setPeriodClass(e) {
-  // userProperties.setProperty("courseStateChanged", true);
+  // userProperties.setProperty(USER_PREFIX+"courseStateChanged", true);
   var classInfo = e.parameters.classInfo;
   var classInfo = JSON.parse(classInfo);
   var prtVal = classInfo[2];
@@ -168,7 +124,7 @@ function setPeriodClass(e) {
 }
 
 function setPrtClass(e) {
-  userProperties.setProperty("courseStateChanged", true);
+  userProperties.setProperty(USER_PREFIX+"courseStateChanged", true);
 }
 
 // day, period, prt, lunch
@@ -176,7 +132,7 @@ function setPrtClass(e) {
 
 function uiForIrregularPeriodClass(course) {
   var subject;
-  if (course != null) subject = JSON.parse(PropertiesService.getUserProperties().getProperty(course));
+  if (course != null) subject = JSON.parse(userProperties.getProperty(IRREGULAR_PREFIX+course));
   else subject = new Subject("", null, null, null);
     
   var courseName = CardService.newTextInput()

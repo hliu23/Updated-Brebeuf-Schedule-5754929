@@ -1,35 +1,72 @@
+// This program takes data from Google Classroom and user input to create personalized events in Google Calendar according to each user's class times (Help and Feedback options are available in the add-on)
+
 // 2021.4.27: START FROM filterPreserved() NEXT TIME
+// MERGED BETWEEN LATEST GITHUB AND LATEST WEB VERSION
+// POSSIBLE LOST OF CHANGES BETWEEN LAST GITHUB COMMIT (FILTER) AND LAST EDIT (COLORS)
 
 // COMMON & IRREGULAR & TEST
 // APP SCRIPT -> CLASP -> LOCAL -> GIT -> GITHUBS 
 
-// Return keys of user properties that contain course info
-function chooseCoursesProperties() {
-  var userPropertiesKeys = userProperties.getKeys();
-  var preservedKeys = ["calendarId", "lastCompletedDate", "courseStateChanged"];
+var userProperties = PropertiesService.getUserProperties();
 
-  function filterPreserved(key) {
-    var keep = !(preservedKeys.includes(key));
-    // ADD NEW PREFIX IN FRONT OF EACH COURSE PROPERTY?
-    // if (key.includes("IRREGULAR")) keep = false;
+
+// Return keys of user properties that contain course info
+const REGULAR_PREFIX = "REG_";
+const IRREGULAR_PREFIX = "IRREG_";
+const USER_PREFIX = "USER_";
+
+function update() {
+  const CURRENT_VERSION = "2021-04-29-1";
+  var version = userProperties.getProperty(USER_PREFIX+"version");
+  if (version == null || version != CURRENT_VERSION) {
+    userProperties.deleteAllProperties();
+  }
+  userProperties.setProperty(USER_PREFIX+"version", CURRENT_VERSION);
+}
+
+
+// function chooseCoursesProperties() {
+//   
+//   var preservedKeys = ["calendarId", "lastCompletedDate", "courseStateChanged"];
+
+//   function filterPreserved(key) {
+//     var keep = !(preservedKeys.includes(key));
+//     // ADDED NEW PREFIX IN FRONT OF EACH COURSE PROPERTY? SO NO CONFLICTS
+    
+//     // if (key.includes("IRREGULAR")) keep = false;
+//     return keep;
+//   } 
+
+//   // FILTER: RETURN TRUE TO KEEP
+//   var coursePropertiesKeys = userPropertiesKeys.filter(filterPreserved);
+//   return coursePropertiesKeys;
+// }
+
+function chooseRegularCoursesProperties() {
+  var userPropertiesKeys = userProperties.getKeys();
+  console.log(userPropertiesKeys)
+
+  function filterRegular(key) {
+    var keep = key.startsWith(REGULAR_PREFIX);
     return keep;
   } 
 
-  // FILTER: RETURN TRUE TO KEEP
-  var coursePropertiesKeys = userPropertiesKeys.filter(filterPreserved);
-  return coursePropertiesKeys;
+  var regularCoursePropertiesKeys = userPropertiesKeys.filter(filterRegular);
+
+  return regularCoursePropertiesKeys;
 }
 
 
 // Return parts of user properties that contain course info
-function getCourseProperties() {
-  var chooseCourseProperties = chooseCoursesProperties();
-  var courseProperties = [];
-  for (x of chooseCourseProperties) {
-    var property = PropertiesService.getUserProperties().getProperty(x);
-    courseProperties.push(property);
+function getRegularCoursesProperties() {
+  var chooseRegularCourseProperties = chooseRegularCoursesProperties();
+  var regularCourseProperties = [];
+  for (x of chooseRegularCourseProperties) {
+    var property = userProperties.getProperty(x);
+    console.log(x);
+    regularCourseProperties.push(property);
   }
-  return courseProperties;
+  return regularCourseProperties;
 }
 
 // CONST
@@ -140,6 +177,4 @@ function lunchOptions(unselectedOption, lunchVal) {
   return lunch;
 }
 
-function deleteUserInfo() {
-  userProperties.deleteAllProperties()
-}
+// PRIVACY

@@ -50,8 +50,8 @@ function checkEvents() {
 // Create calendar in user's calendar if it has not been created or if the user has made any changes to course info since last run
 function createCalendar(schedule) {
   try {
-    var courseStateChanged = userProperties.getProperty("courseStateChanged");
-    var calProperty = userProperties.getProperty("calendarId");
+    var courseStateChanged = userProperties.getProperty(USER_PREFIX+"courseStateChanged");
+    var calProperty = userProperties.getProperty(USER_PREFIX+"calendarId");
     
     var resCode = 0;
 
@@ -68,9 +68,9 @@ function createCalendar(schedule) {
 
       var calId = calendar.getId();
 
-      userProperties.setProperty("calendarId", calId);
+      userProperties.setProperty(USER_PREFIX+"calendarId", calId);
       if (resCode != 200 || courseStateChanged == "true") {
-        userProperties.deleteProperty("lastCompletedDate");
+        userProperties.deleteProperty(USER_PREFIX+"lastCompletedDate");
       };
       
     } else var calId = calProperty;
@@ -113,7 +113,7 @@ function createEvents(e) {
   var calId = e.parameters.calId;
   var schedule = JSON.parse(e.parameters.schedule);
   
-  var lastDate = userProperties.getProperty("lastCompletedDate");
+  var lastDate = userProperties.getProperty(USER_PREFIX+"lastCompletedDate");
   if (lastDate == null) {
     var startDate = new Date();
     startDate.setHours(0,0,0,0);
@@ -127,20 +127,20 @@ function createEvents(e) {
 
   if (brebeufDay(startDate) == 8) {
     createEventsOfDay(calId, schedule, startDate);
-    userProperties.setProperty("lastCompletedDate", msCurrentDate);
+    userProperties.setProperty(USER_PREFIX+"lastCompletedDate", msCurrentDate);
     currentDate.setDate(currentDate.getDate() + 1);
   }
 
   while (brebeufDay(currentDate) !== 8) {
     createEventsOfDay(calId, schedule, currentDate);
     msCurrentDate = Date.parse(currentDate);
-    userProperties.setProperty("lastCompletedDate", msCurrentDate);
+    userProperties.setProperty(USER_PREFIX+"lastCompletedDate", msCurrentDate);
     currentDate.setDate(currentDate.getDate() + 1);
   }
 
   createEventsOfDay(calId, schedule, currentDate);
   msCurrentDate = Date.parse(currentDate);
-  userProperties.setProperty("lastCompletedDate", msCurrentDate);
+  userProperties.setProperty(USER_PREFIX+"lastCompletedDate", msCurrentDate);
     
   batchRequests();
   console.timeEnd("createEvents");
@@ -397,5 +397,5 @@ function classOrder(n) {
 }
 
 function temporary() {
-  userProperties.deleteProperty("calendarId");
+  userProperties.deleteProperty(USER_PREFIX+"calendarId");
 }

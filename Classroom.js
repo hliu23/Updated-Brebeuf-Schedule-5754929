@@ -9,9 +9,7 @@
 // DATE TIME PICKER / IRREGULAR CLASSES / HTML INTERFACE
 // COLOR CODE: SYNC TO CLASSROOM COLORS? / ALT SCHEDULE
 // ON THE CREATE EVENTS PAGE BUT DELETED CALENDAR
-
-// This program takes data from Google Classroom and user input to create personalized events in Google Calendar according to each user's class times (Help and Feedback options are available in the add-on)
-var userProperties = PropertiesService.getUserProperties();
+// NULL STRING
 
 // Construct class that will store course info
 class Subject {
@@ -25,6 +23,7 @@ class Subject {
 
 // Save all possible class times in script properties; information comes from the schedule Brebeuf released
 function toHomePage() {
+  update();
   PropertiesService.getScriptProperties().setProperties({
     "CLASS_1" : "08:30",
     
@@ -40,7 +39,7 @@ function toHomePage() {
 
     "CLASS_5" : "13:50",
   });
-  userProperties.setProperty("courseStateChanged", false);
+  userProperties.setProperty(USER_PREFIX+"courseStateChanged", false);
   return homePage();
 }
 
@@ -48,7 +47,7 @@ function toHomePage() {
 function homePage() {
   var startSection = CardService.newCardSection();
   
-  var initializeButton = newButton("Retrieve Classes from Classroom", "initialize", "#761113");
+  var initializeButton = newButton("Retrieve Courses from Classroom", "initialize", "#761113");
   var createButton = newButton("Add a Course", "createCourse", "#761113");
 
   startSection.addWidget(initializeButton)
@@ -56,10 +55,17 @@ function homePage() {
 
   var courseSection = CardService.newCardSection();
   var courseList = sortCourses();
-  for (x in courseList) {
-    var courseButtonSet = createToCardButtonSet(courseList[x]);
-    courseSection.addWidget(courseButtonSet);
-  };
+  if (courseList.length == 0) {
+    const PROMPT = "No course information stored. \n\nRetrieve courses from Google Classroom by clicking on the maroon button above."
+    var textExplanation = CardService.newTextParagraph()
+      .setText(PROMPT);
+    courseSection.addWidget(textExplanation);
+  } else {
+    for (x in courseList) {
+      var courseButtonSet = createToCardButtonSet(courseList[x]);
+      courseSection.addWidget(courseButtonSet);
+    };
+  }
   
   var calendarSection = CardService.newCardSection();
   var calendarButton = newButton("Create Events in Calendar", "checkEvents", "#DEAC3F");
@@ -77,7 +83,7 @@ function homePage() {
 
 // Retrieve classes from Classroom and save them in user properties
 function initialize() {
-  userProperties.setProperty("courseStateChanged", true);
+  userProperties.setProperty(USER_PREFIX+"courseStateChanged", true);
 
   const PARAMS = {method: "get", headers: {Authorization: "Bearer " + ScriptApp.getOAuthToken()}};
   var res = UrlFetchApp.fetch("https://classroom.googleapis.com/v1/courses?courseStates=ACTIVE&studentId=me&fields=courses/name", PARAMS);
@@ -94,13 +100,13 @@ function initialize() {
   };
 
   // Delete previously stored courses
-  for (x of chooseCoursesProperties()) {
+  for (x of chooseRegularCoursesProperties()) {
     userProperties.deleteProperty(x);
   };
 
   for (y in courseList) {
     var subject = infoFromCourseName(courseList[y]);
-    userProperties.setProperty(subject.name.toString(), JSON.stringify(subject));
+    userProperties.setProperty(REGULAR_PREFIX+subject.name.toString(), JSON.stringify(subject));
   };
 
   var toHomePage = CardService.newNavigation().popToNamedCard("homePage").updateCard(homePage());
@@ -115,7 +121,8 @@ function initialize() {
 
 // Take all existing in user properties and return their names, sorted by their entered period numbers if available, else sorted by alphabetical order
 function sortCourses() {
-  var courseProperties = getCourseProperties();
+  var courseProperties = getRegularCoursesProperties();
+
   var periodNull = [];
   var periodExisting = [];
   var courseList = [];
@@ -253,7 +260,7 @@ function uiForCourse(course) {
   const NULL_STRING = "!nullnullnullnullnullnullnullnullnullnull!";
 
   var subject; 
-  if (course != null) subject = JSON.parse(PropertiesService.getUserProperties().getProperty(course));
+  if (course != null) subject = JSON.parse(userProperties.getProperty(REGULAR_PREFIX+course));
   else subject = new Subject("", null, null, null);
 
   var status;
@@ -327,7 +334,7 @@ function uiForCourse(course) {
 function updateCourseInfo(e) {
   const NULL_STRING = "!nullnullnullnullnullnullnullnullnullnull!";
 
-  userProperties.setProperty("courseStateChanged", true);
+  userProperties.setProperty(USER_PREFIX+"courseStateChanged", true);
   try {
     var name = e.commonEventObject.formInputs["name_input"].stringInputs.value[0];
     var period = e.commonEventObject.formInputs["period_input"].stringInputs.value[0];
@@ -354,11 +361,12 @@ function updateCourseInfo(e) {
   
   period = parseInt(period, 10);
   if (status !== NULL_STRING) {
-    userProperties.deleteProperty(subject);
+    userProperties.deleteProperty(REGULAR_PREFIX+status);
   };
+  // SUBJECT?
   
   var course = new Subject(name, period, prt, lunch);
-  userProperties.setProperty(course.name, JSON.stringify(course));
+  userProperties.setProperty(REGULAR_PREFIX+course.name, JSON.stringify(course));
 
   var toHomePage = CardService.newNavigation().popToNamedCard("homePage").updateCard(homePage());
   return CardService.newActionResponseBuilder()
@@ -372,12 +380,12 @@ function updateCourseInfo(e) {
 function deleteCourse(e) {
   const NULL_STRING = "!nullnullnullnullnullnullnullnullnullnull!";
 
-  userProperties.setProperty("courseStateChanged", true);
+  userProperties.setProperty(USER_PREFIX+"courseStateChanged", true);
   var status = e.parameters.status;
 
   if (status !== NULL_STRING) {
     var subject = e.parameters.subject;
-    userProperties.deleteProperty(subject);
+    userProperties.deleteProperty(REGULAR_PREFIX+subject);
   }
   
   var toHomePage = CardService.newNavigation().popToNamedCard("homePage").updateCard(homePage());
@@ -390,9 +398,9 @@ function deleteCourse(e) {
 
 // Delete course from user properties from home page
 function deleteCourseFromMenu(e) {
-  userProperties.setProperty("courseStateChanged", true);
+  userProperties.setProperty(USER_PREFIX+"courseStateChanged", true);
   subject = e.parameters.name;
-  PropertiesService.getUserProperties().deleteProperty(subject);
+  userProperties.deleteProperty(REGULAR_PREFIX+subject);
   var updateHomePage = CardService.newNavigation().updateCard(homePage());
   return CardService.newActionResponseBuilder()
     .setNavigation(updateHomePage)
