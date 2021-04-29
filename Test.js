@@ -1,4 +1,3 @@
-// INCOMPLETE
 function testCase(func, input = null, expectedResults) {
   var returnVal = func(input);
   var success = false;

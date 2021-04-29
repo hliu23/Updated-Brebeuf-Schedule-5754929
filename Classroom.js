@@ -7,20 +7,11 @@
 // ONE BUTTON TO END OF SEMESTER
 // GOOGLE SHEET? SAME TIME EACH CYCLE
 // DATE TIME PICKER / IRREGULAR CLASSES / HTML INTERFACE
-// COLOR CODE / ALT SCHEDULE
+// COLOR CODE: SYNC TO CLASSROOM COLORS? / ALT SCHEDULE
+// ON THE CREATE EVENTS PAGE BUT DELETED CALENDAR
 
 // This program takes data from Google Classroom and user input to create personalized events in Google Calendar according to each user's class times (Help and Feedback options are available in the add-on)
 var userProperties = PropertiesService.getUserProperties();
-
-// Construct class that will store course info
-class Subject {
-  constructor(name, period, prt, lunch) {
-    this.name = name;
-    this.period = period;
-    this.prt = prt;
-    this.lunch = lunch;   
-  };
-}
 
 // Save all possible class times in script properties; information comes from the schedule Brebeuf released
 function toHomePage() {
@@ -319,6 +310,17 @@ function uiForCourse(course) {
     .addSection(section);
 
   return card.build();
+}
+
+
+// Construct class that will store course info
+class Subject {
+  constructor(name, period, prt, lunch) {
+    this.name = name;
+    this.period = period;
+    this.prt = prt;
+    this.lunch = lunch;   
+  };
 }
 
 
