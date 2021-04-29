@@ -124,38 +124,17 @@ function updateIncompleteCourseInfo(e) {
     .build();
 }
 
-class Irregular_Period {
-  constructor(name, day, period, prt, lunch) {
-    this.name = name;
-    this.day = day;
-    this.period = period;
-    this.prt = prt;
-    this.lunch = lunch;
-  };
-}
-// FROM STARTING DATE?
-// FROM STARTING TIME?
-
-class Irregular_PRT {
-  constructor(name, day, prt) {
-    this.name = name;
-    this.day = day;
-    this.prt = prt;
-  };
-}
-
 function setPeriodClass(e) {
   // userProperties.setProperty("courseStateChanged", true);
   var classInfo = e.parameters.classInfo;
   var classInfo = JSON.parse(classInfo);
-  var prtVal = classInfo[2];
-  var lunchVal = classInfo[3];
+  var subject = new Subject(classInfo[0], classInfo[1], classInfo[2], classInfo[3]);
   var status = classInfo[4];
 
   const UNSELECTED_OPTION = "N/A";
 
-  var prt = prtOptions(UNSELECTED_OPTION, prtVal);
-  var lunch = lunchOptions(UNSELECTED_OPTION, lunchVal);
+  var prt = prtOptions(UNSELECTED_OPTION, subject.prt);
+  var lunch = lunchOptions(UNSELECTED_OPTION, subject.lunch);
 
   var section = CardService.newCardSection()
     .addWidget(prt)
@@ -236,3 +215,5 @@ function uiForIrregularPeriodClass(course) {
 
   return card.build();
 }
+
+
