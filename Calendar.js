@@ -64,7 +64,7 @@ function createCalendar(schedule) {
         summary: "A calendar with scheduled personalized reminders at Brebeuf class time.",
         timeZone: "America/New_York"
       });
-      calendar.setColor("#DEAC3F");
+      calendar.setColor("#761113");
 
       var calId = calendar.getId();
 
@@ -236,7 +236,8 @@ function createEventsOfDay(calId, schedule, currentDate) {
                   }
                 ],
                 "useDefault": false
-              }
+              },
+              "colorId": currentPeriodNum
             }
           });
 
@@ -275,7 +276,8 @@ function createEventsOfDay(calId, schedule, currentDate) {
                   }
                 ],
                 "useDefault": false
-              }
+              },
+              "colorId": currentPeriodNum
             }
           });
 
@@ -307,7 +309,8 @@ function createEventsOfDay(calId, schedule, currentDate) {
                   }
                 ],
                 "useDefault": false
-              }
+              },
+              "colorId": currentPeriodNum
             }
           });
         }
