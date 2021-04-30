@@ -12,7 +12,7 @@ var requests = [];
 
 // Check that course info are entered as expected (do not allow proceeding until issue fixed)
 function checkEvents() {
-  var courseProperties = getCourseProperties();
+  var courseProperties = getRegularCoursesProperties();
 
   try {
     var periodNum = [];
@@ -324,13 +324,17 @@ function brebeufDay(enteredDate) {
   var enteredDate = new Date(enteredDate);
   enteredDate.setHours(0,0,0,0);
 
-  const DAY_ONE = new Date("Feb 9, 2021");
   const SPECIAL_DAY = ["Feb 15, 2021", "Mar 15, 2021", "Mar 22, 2021", "Mar 23, 2021", "Mar 24, 2021", "Mar 25, 2021", "Mar 26, 2021", "Apr 2, 2021", "Apr 5, 2021"];
-  const EXTENDED_BREAK = [["May 19, 2021", "Aug 5, 2021"]];
+  const EXTENDED_BREAK = [["May 29, 2021", "Aug 5, 2021", "RESET"]];
+  var day_one = new Date("Feb 9, 2021");
   // OFF TIMES
   // INCLUDE, INCLUDE
   // CHECK DATE
   // SKIPPING FIRST DATE
+  // STARTING FROM DAY 8 AFTER SUMMER BREAK
+  // DELETE OLD CALENDAR AND CREATE NEW UP-TO-DATE
+  // EXPORT SETTINGS
+  // DELETED PROPERTIES: INFO REENTER
 
   var specialDays = [];
   var extendedBreak = [];
@@ -341,15 +345,20 @@ function brebeufDay(enteredDate) {
     let startDate = new Date(EXTENDED_BREAK[y][0]);
     let endDate = new Date(EXTENDED_BREAK[y][1]);
     extendedBreak[y] = [startDate, endDate];
+    let newDate = new Date(EXTENDED_BREAK[y][1]);
+    newDate.setDate(newDate.getDate() + 1);
+    // EFFICIENCY?
+      
+    if (EXTENDED_BREAK[y][2] === "RESET" && enteredDate.getTime() > endDate.getTime()) day_one = new Date(newDate);
   }
   // LIST IN TIME AND DELETE?
 
   
   var brebeufDay = 0;
-  var dayTest = new Date(DAY_ONE);
+  var dayTest = new Date(day_one);
 
-  if (enteredDate.getTime() == DAY_ONE.getTime()) brebeufDay = 1;
-  else if (enteredDate.getTime() < DAY_ONE.getTime()) brebeufDay = null;
+  if (enteredDate.getTime() == day_one.getTime()) brebeufDay = 1;
+  else if (enteredDate.getTime() < day_one.getTime()) brebeufDay = null;
   else if (enteredDate.getDay() == 6 || enteredDate.getDay() == 0) brebeufDay = null;
   else {
     for (s of specialDays) {

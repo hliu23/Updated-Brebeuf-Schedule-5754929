@@ -8,13 +8,6 @@ function testCase(func, input = null, expectedResults) {
 }
 // THROW ERROR?
 
-// class TestCases {
-//   constructor(input, output) {
-//     this.input = input;
-//     this.output = output;
-//   }
-// }
-
 function testFunc(func, testCases) {
   let successCount = 0;
   var currentTestCases = JSON.parse(testCases);
@@ -52,3 +45,7 @@ function test(){
 
 // DECLARATION
 // STORE OBJECT? LIST OF INPUT AND OUTPUT FOR A PARTICULAR FUNCTION
+
+function test2(){
+  Logger.log(brebeufDay("Aug 5, 2021"));
+}

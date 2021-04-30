@@ -56,7 +56,7 @@ function homePage() {
   var courseSection = CardService.newCardSection();
   var courseList = sortCourses();
   if (courseList.length == 0) {
-    const PROMPT = "No course information stored. \n\nRetrieve courses from Google Classroom by clicking on the maroon button above."
+    const PROMPT = "No course information stored. \n\nRetrieve courses from Google Classroom by clicking on the first button above."
     var textExplanation = CardService.newTextParagraph()
       .setText(PROMPT);
     courseSection.addWidget(textExplanation);

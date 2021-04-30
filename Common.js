@@ -25,26 +25,8 @@ function update() {
 }
 
 
-// function chooseCoursesProperties() {
-//   
-//   var preservedKeys = ["calendarId", "lastCompletedDate", "courseStateChanged"];
-
-//   function filterPreserved(key) {
-//     var keep = !(preservedKeys.includes(key));
-//     // ADDED NEW PREFIX IN FRONT OF EACH COURSE PROPERTY? SO NO CONFLICTS
-    
-//     // if (key.includes("IRREGULAR")) keep = false;
-//     return keep;
-//   } 
-
-//   // FILTER: RETURN TRUE TO KEEP
-//   var coursePropertiesKeys = userPropertiesKeys.filter(filterPreserved);
-//   return coursePropertiesKeys;
-// }
-
 function chooseRegularCoursesProperties() {
   var userPropertiesKeys = userProperties.getKeys();
-  console.log(userPropertiesKeys)
 
   function filterRegular(key) {
     var keep = key.startsWith(REGULAR_PREFIX);
