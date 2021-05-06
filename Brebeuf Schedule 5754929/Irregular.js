@@ -99,11 +99,16 @@ class Irregular_PRT {
     this.prt = prt;
   };
 }
+// MAP?
 
 function setPeriodClass(e) {
+  // HIDDEN SETTINGS?
   // userProperties.setProperty(USER_PREFIX+"courseStateChanged", true);
   var classInfo = e.parameters.classInfo;
   var classInfo = JSON.parse(classInfo);
+  // MORE EFFICIENT WAY?
+  var nameVal = classInfo[0];
+  var periodVal = classInfo[1];
   var prtVal = classInfo[2];
   var lunchVal = classInfo[3];
   var status = classInfo[4];
@@ -115,7 +120,7 @@ function setPeriodClass(e) {
 
   var section = CardService.newCardSection()
     .addWidget(prt)
-    .addWidget(lunch)
+    .addWidget(lunch);
 
   var card = CardService.newCardBuilder()
     .addSection(section);
@@ -145,14 +150,6 @@ function uiForIrregularPeriodClass(course) {
     .setTitle("Period Number");
 
   if (subject.period != null) periodNum.setValue(subject.period.toString());
-
-  var irregularClass = CardService.newTextButton()
-    .setText("Irregular Class")
-    .setOnClickAction(CardService.newAction()
-      .setFunctionName("irregularClass")
-      .setParameters({courseName: subject.name}));
-
-  
 
   if (course == null) status = "!nullnullnullnullnullnullnullnullnullnull!";
   else status = course.toString();

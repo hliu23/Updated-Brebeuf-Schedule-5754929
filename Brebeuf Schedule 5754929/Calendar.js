@@ -324,9 +324,12 @@ function brebeufDay(enteredDate) {
   var enteredDate = new Date(enteredDate);
   enteredDate.setHours(0,0,0,0);
 
-  const SPECIAL_DAY = ["Feb 15, 2021", "Mar 15, 2021", "Mar 22, 2021", "Mar 23, 2021", "Mar 24, 2021", "Mar 25, 2021", "Mar 26, 2021", "Apr 2, 2021", "Apr 5, 2021"];
+  // SCRIPT PROPERTIES?
+  // CHECK POINTS? 
+  // AUTOMATIC CHECK AFTER EDIT?
+  const SPECIAL_DAY = [];
   const EXTENDED_BREAK = [["May 29, 2021", "Aug 5, 2021", "RESET"]];
-  var day_one = new Date("Feb 9, 2021");
+  var day_one = new Date("Apr 29, 2021");
   // OFF TIMES
   // INCLUDE, INCLUDE
   // CHECK DATE

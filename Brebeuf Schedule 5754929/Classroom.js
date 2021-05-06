@@ -24,21 +24,7 @@ class Subject {
 // Save all possible class times in script properties; information comes from the schedule Brebeuf released
 function toHomePage() {
   update();
-  PropertiesService.getScriptProperties().setProperties({
-    "CLASS_1" : "08:30",
-    
-    "CLASS_2_PRT_A" : "10:05",
-    "CLASS_2_PRT_B" : "09:35",
-
-    "CLASS_3_LUNCH_A" : "11:40",
-    "CLASS_3_LUNCH_B_I" : "11:10",
-    "CLASS_3_LUNCH_B_II" : "12:10",
-    "CLASS_3_LUNCH_C" : "11:10",
-
-    "CLASS_4" : "12:45",
-
-    "CLASS_5" : "13:50",
-  });
+  // SCRIPT PROPERTIES?
   userProperties.setProperty(USER_PREFIX+"courseStateChanged", false);
   return homePage();
 }
@@ -260,12 +246,16 @@ function uiForCourse(course) {
   const NULL_STRING = "!nullnullnullnullnullnullnullnullnullnull!";
 
   var subject; 
-  if (course != null) subject = JSON.parse(userProperties.getProperty(REGULAR_PREFIX+course));
-  else subject = new Subject("", null, null, null);
-
   var status;
-  if (course == null) status = NULL_STRING;
-  else status = course.toString();
+  // NAME CHANGE?
+  if (course != null) {
+    subject = JSON.parse(userProperties.getProperty(REGULAR_PREFIX+course));
+    status = course.toString();
+  } else {
+    subject = new Subject("", null, null, null);
+    status = NULL_STRING;
+  }
+
     
   var courseName = CardService.newTextInput()
     .setFieldName("name_input")
@@ -300,7 +290,7 @@ function uiForCourse(course) {
     .setBackgroundColor("#761113")
     .setOnClickAction(CardService.newAction()
       .setFunctionName("updateCourseInfo")
-      .setParameters({subject: subject.name, status: status}));
+      .setParameters({subjectName: subject.name, status: status}));
 
   var deleteButton = CardService.newTextButton()
     .setText("Delete Course")
@@ -308,7 +298,7 @@ function uiForCourse(course) {
     .setBackgroundColor("#DEAC3F")
     .setOnClickAction(CardService.newAction()
       .setFunctionName("deleteCourse")
-      .setParameters({subject: subject.name, status: status}));
+      .setParameters({subjectName: subject.name, status: status}));
 
   var cardButtonSet = CardService.newButtonSet()
     .addButton(saveButton)
@@ -356,12 +346,12 @@ function updateCourseInfo(e) {
     else return newNotify("Please make sure all the fields are filled in correctly.");
   };
   
-  var subject = e.parameters.subject;
+  var subjectName = e.parameters.subjectName;
   var status = e.parameters.status;
   
   period = parseInt(period, 10);
   if (status !== NULL_STRING) {
-    userProperties.deleteProperty(REGULAR_PREFIX+status);
+    userProperties.deleteProperty(REGULAR_PREFIX+subjectName);
   };
   // SUBJECT?
   
@@ -384,8 +374,8 @@ function deleteCourse(e) {
   var status = e.parameters.status;
 
   if (status !== NULL_STRING) {
-    var subject = e.parameters.subject;
-    userProperties.deleteProperty(REGULAR_PREFIX+subject);
+    var subjectName = e.parameters.subjectName;
+    userProperties.deleteProperty(REGULAR_PREFIX+subjectName);
   }
   
   var toHomePage = CardService.newNavigation().popToNamedCard("homePage").updateCard(homePage());
