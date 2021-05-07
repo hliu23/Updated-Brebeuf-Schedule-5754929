@@ -12,7 +12,7 @@ var requests = [];
 
 // Check that course info are entered as expected (do not allow proceeding until issue fixed)
 function checkEvents() {
-  var courseProperties = getRegularCoursesProperties();
+  var courseProperties = getRegularPeriodProp();
 
   try {
     var periodNum = [];

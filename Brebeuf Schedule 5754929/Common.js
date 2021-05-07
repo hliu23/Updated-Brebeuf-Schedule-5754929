@@ -9,46 +9,46 @@
 
 var userProperties = PropertiesService.getUserProperties();
 
-
+// SCRIPT PROPERTY?
 // Return keys of user properties that contain course info
 const REGULAR_PREFIX = "REG_";
 const IRREGULAR_PREFIX = "IRREG_";
 const USER_PREFIX = "USER_";
 
 function update() {
-  const CURRENT_VERSION = "2021-04-29-1";
+  const CURRENT_VERSION = "2021-05-07-1";
   var version = userProperties.getProperty(USER_PREFIX+"version");
   if (version == null || version != CURRENT_VERSION) {
+    // UPDATES
     userProperties.deleteAllProperties();
   }
   userProperties.setProperty(USER_PREFIX+"version", CURRENT_VERSION);
 }
 
 
-function chooseRegularCoursesProperties() {
-  var userPropertiesKeys = userProperties.getKeys();
+function regularPeriodPropKeys() {
+  var userPropKeys = userProperties.getKeys();
 
   function filterRegular(key) {
     var keep = key.startsWith(REGULAR_PREFIX);
     return keep;
   } 
+  var regularPeriodPropKeys = userPropKeys.filter(filterRegular);
 
-  var regularCoursePropertiesKeys = userPropertiesKeys.filter(filterRegular);
-
-  return regularCoursePropertiesKeys;
+  return regularPeriodPropKeys;
 }
 
 
 // Return parts of user properties that contain course info
-function getRegularCoursesProperties() {
-  var chooseRegularCourseProperties = chooseRegularCoursesProperties();
-  var regularCourseProperties = [];
-  for (x of chooseRegularCourseProperties) {
-    var property = userProperties.getProperty(x);
-    console.log(x);
-    regularCourseProperties.push(property);
+function getRegularPeriodProp() {
+  var regPeriodPropKeys = regularPeriodPropKeys();
+  var regularPeriodProp = [];
+  for (x of regPeriodPropKeys) {
+    var prop = userProperties.getProperty(x);
+    prop = JSON.parse(prop);
+    regularPeriodProp.push(prop);
   }
-  return regularCourseProperties;
+  return regularPeriodProp;
 }
 
 // CONST

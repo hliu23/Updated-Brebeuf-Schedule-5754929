@@ -10,82 +10,14 @@
 // COLOR CODE: SYNC TO CLASSROOM COLORS? / ALT SCHEDULE
 // ON THE CREATE EVENTS PAGE BUT DELETED CALENDAR
 // NULL STRING
+// NAMING
 
-// Construct class that will store course info
+// SCRIPT PROPERTIES?
 
-class Course {
-  constructor(name, prt) {
-    this._name = name;
-    this._prt = prt;
-  };
-  get name() {
-    return this._name;
-  };
-  set name(val) {
-    this._name = val;
-  };
-  get prt() {
-    return this._prt;
-  };
-  set prt(val) {
-    this._prt = val;
-  };
-}
-
-class Regular_Period extends Course {
-  constructor(name, period, prt, lunch) {
-    super(name, prt);
-    this._period = period;
-    this._lunch = lunch; 
-  };
-
-  get period() {
-    return this._period;
-  };
-  set period(val) {
-    this._period = val;
-  };
-  
-  get lunch() {
-    return this._lunch;
-  };
-  set lunch(val) {
-    this._lunch = val;
-  };
-}
-
-class Irregular_Period extends Regular_Period {
-  constructor(name, day, period, prt, lunch) {
-    super(name, period, prt, lunch);
-    this._day = day;
-  };
-
-  get day() {
-    return this._day;
-  };
-  set day(val) {
-    this._day = val;
-  };
-}
-
-class Irregular_PRT extends Course {
-  constructor(name, day, prt) {
-    super(name, prt);
-    this._day = day;
-  };
-
-  get day() {
-    return this._day;
-  };
-  set day(val) {
-    this._day = val;
-  };
-}
 
 // Save all possible class times in script properties; information comes from the schedule Brebeuf released
 function toHomePage() {
   update();
-  // SCRIPT PROPERTIES?
   userProperties.setProperty(USER_PREFIX+"courseStateChanged", false);
   return homePage();
 }
@@ -147,7 +79,7 @@ function initialize() {
   };
 
   // Delete previously stored courses
-  for (x of chooseRegularCoursesProperties()) {
+  for (x of regularPeriodPropKeys()) {
     userProperties.deleteProperty(x);
   };
 
@@ -168,14 +100,17 @@ function initialize() {
 
 // Take all existing in user properties and return their names, sorted by their entered period numbers if available, else sorted by alphabetical order
 function sortCourses() {
-  var courseProperties = getRegularCoursesProperties();
+  // JSON?
+  var courseProperties = getRegularPeriodProp();
+  console.log(courseProperties);
 
   var periodNull = [];
   var periodExisting = [];
   var courseList = [];
 
   for (n in courseProperties) {
-    var subject = JSON.parse(courseProperties[n]);
+    var subject = courseProperties[n];
+    console.log(subject);
     if (subject.period == null) periodNull.push(subject.name);
     else periodExisting.push(subject);
   };
@@ -212,6 +147,7 @@ function sortCourses() {
 
 // Create buttons that can be checked on to view detailed info about classes
 function createToCardButtonSet(name) {
+  console.log("set "+name);
   var gotoCourse = CardService.newAction()
     .setFunctionName("gotoCourse")
     .setParameters({name: name.toString()});
@@ -296,6 +232,7 @@ function infoFromCourseName(courseName) {
   }
 
   var courseInfo = new Regular_Period(courseName, periodNum, prtLetter, lunchLetter);
+  console.log("infoFrom "+courseInfo);
   return courseInfo;
 }
 

@@ -47,5 +47,8 @@ function test(){
 // STORE OBJECT? LIST OF INPUT AND OUTPUT FOR A PARTICULAR FUNCTION
 
 function test2(){
-  Logger.log(brebeufDay("Aug 5, 2021"));
+  var subject = new Regular_Period("123", 3, "A", "C");
+  Logger.log(test);
+  
 }
+
