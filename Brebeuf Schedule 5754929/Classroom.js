@@ -12,12 +12,73 @@
 // NULL STRING
 
 // Construct class that will store course info
-class Subject {
+
+class Course {
+  constructor(name, prt) {
+    this._name = name;
+    this._prt = prt;
+  };
+  get name() {
+    return this._name;
+  };
+  set name(val) {
+    this._name = val;
+  };
+  get prt() {
+    return this._prt;
+  };
+  set prt(val) {
+    this._prt = val;
+  };
+}
+
+class Regular_Period extends Course {
   constructor(name, period, prt, lunch) {
-    this.name = name;
-    this.period = period;
-    this.prt = prt;
-    this.lunch = lunch;   
+    super(name, prt);
+    this._period = period;
+    this._lunch = lunch; 
+  };
+
+  get period() {
+    return this._period;
+  };
+  set period(val) {
+    this._period = val;
+  };
+  
+  get lunch() {
+    return this._lunch;
+  };
+  set lunch(val) {
+    this._lunch = val;
+  };
+}
+
+class Irregular_Period extends Regular_Period {
+  constructor(name, day, period, prt, lunch) {
+    super(name, period, prt, lunch);
+    this._day = day;
+  };
+
+  get day() {
+    return this._day;
+  };
+  set day(val) {
+    this._day = val;
+  };
+}
+
+class Irregular_PRT extends Course {
+  constructor(name, day, prt) {
+    super(name, prt);
+    this._day = day;
+  };
+
+  get day() {
+    return this._day;
+  };
+  set day(val) {
+    this._day = val;
   };
 }
 
@@ -234,13 +295,13 @@ function infoFromCourseName(courseName) {
     if (periodNum < 1 || periodNum > 8) periodNum = null;
   }
 
-  var courseInfo = new Subject(courseName, periodNum, prtLetter, lunchLetter);
+  var courseInfo = new Regular_Period(courseName, periodNum, prtLetter, lunchLetter);
   return courseInfo;
 }
 
 // WHAT IF VAR COURSE IS NOT STORED IN USERPROPERTIES?
 // Create a detailed class info page that allows the user to alter the class name, period number, PRT and lunch letter and save changes (if all fields are filled in as expected) or delete the course
-function uiForCourse(course) {
+function uiForCourse(course, courseType = "REGULAR") {
 
   // NEWLY CREATED COURSE
   const NULL_STRING = "!nullnullnullnullnullnullnullnullnullnull!";
@@ -252,10 +313,9 @@ function uiForCourse(course) {
     subject = JSON.parse(userProperties.getProperty(REGULAR_PREFIX+course));
     status = course.toString();
   } else {
-    subject = new Subject("", null, null, null);
+    subject = new Regular_Period("", null, null, null);
     status = NULL_STRING;
   }
-
     
   var courseName = CardService.newTextInput()
     .setFieldName("name_input")
@@ -270,7 +330,7 @@ function uiForCourse(course) {
   
   // SUBJECT AND STATUS?
   
-  // var irregularClass = newButton("Irregular Class", "irregularClass", "N/A", "status", status);
+  
   var irregularClass = CardService.newTextButton()
     .setText("Irregular Class")
     .setOnClickAction(CardService.newAction()
@@ -318,7 +378,8 @@ function uiForCourse(course) {
 
   return card.build();
 }
-
+// SAVE PROCESS
+// DETECT STATE CHANGED?
 
 // Update course info in user properties according to user input
 function updateCourseInfo(e) {
@@ -355,7 +416,7 @@ function updateCourseInfo(e) {
   };
   // SUBJECT?
   
-  var course = new Subject(name, period, prt, lunch);
+  var course = new Regular_Period(name, period, prt, lunch);
   userProperties.setProperty(REGULAR_PREFIX+course.name, JSON.stringify(course));
 
   var toHomePage = CardService.newNavigation().popToNamedCard("homePage").updateCard(homePage());
