@@ -10,21 +10,14 @@
 // COLOR CODE: SYNC TO CLASSROOM COLORS? / ALT SCHEDULE
 // ON THE CREATE EVENTS PAGE BUT DELETED CALENDAR
 // NULL STRING
+// NAMING
 
-// Construct class that will store course info
-class Subject {
-  constructor(name, period, prt, lunch) {
-    this.name = name;
-    this.period = period;
-    this.prt = prt;
-    this.lunch = lunch;   
-  };
-}
+// SCRIPT PROPERTIES?
+
 
 // Save all possible class times in script properties; information comes from the schedule Brebeuf released
 function toHomePage() {
   update();
-  // SCRIPT PROPERTIES?
   userProperties.setProperty(USER_PREFIX+"courseStateChanged", false);
   return homePage();
 }
@@ -86,7 +79,7 @@ function initialize() {
   };
 
   // Delete previously stored courses
-  for (x of chooseRegularCoursesProperties()) {
+  for (x of regularPeriodPropKeys()) {
     userProperties.deleteProperty(x);
   };
 
@@ -107,14 +100,17 @@ function initialize() {
 
 // Take all existing in user properties and return their names, sorted by their entered period numbers if available, else sorted by alphabetical order
 function sortCourses() {
-  var courseProperties = getRegularCoursesProperties();
+  // JSON?
+  var courseProperties = getRegularPeriodProp();
+  console.log(courseProperties);
 
   var periodNull = [];
   var periodExisting = [];
   var courseList = [];
 
   for (n in courseProperties) {
-    var subject = JSON.parse(courseProperties[n]);
+    var subject = courseProperties[n];
+    console.log(subject);
     if (subject.period == null) periodNull.push(subject.name);
     else periodExisting.push(subject);
   };
@@ -151,6 +147,7 @@ function sortCourses() {
 
 // Create buttons that can be checked on to view detailed info about classes
 function createToCardButtonSet(name) {
+  console.log("set "+name);
   var gotoCourse = CardService.newAction()
     .setFunctionName("gotoCourse")
     .setParameters({name: name.toString()});
@@ -234,13 +231,14 @@ function infoFromCourseName(courseName) {
     if (periodNum < 1 || periodNum > 8) periodNum = null;
   }
 
-  var courseInfo = new Subject(courseName, periodNum, prtLetter, lunchLetter);
+  var courseInfo = new Regular_Period(courseName, periodNum, prtLetter, lunchLetter);
+  console.log("infoFrom "+courseInfo);
   return courseInfo;
 }
 
 // WHAT IF VAR COURSE IS NOT STORED IN USERPROPERTIES?
 // Create a detailed class info page that allows the user to alter the class name, period number, PRT and lunch letter and save changes (if all fields are filled in as expected) or delete the course
-function uiForCourse(course) {
+function uiForCourse(course, courseType = "REGULAR") {
 
   // NEWLY CREATED COURSE
   const NULL_STRING = "!nullnullnullnullnullnullnullnullnullnull!";
@@ -252,10 +250,9 @@ function uiForCourse(course) {
     subject = JSON.parse(userProperties.getProperty(REGULAR_PREFIX+course));
     status = course.toString();
   } else {
-    subject = new Subject("", null, null, null);
+    subject = new Regular_Period("", null, null, null);
     status = NULL_STRING;
   }
-
     
   var courseName = CardService.newTextInput()
     .setFieldName("name_input")
@@ -270,7 +267,7 @@ function uiForCourse(course) {
   
   // SUBJECT AND STATUS?
   
-  // var irregularClass = newButton("Irregular Class", "irregularClass", "N/A", "status", status);
+  
   var irregularClass = CardService.newTextButton()
     .setText("Irregular Class")
     .setOnClickAction(CardService.newAction()
@@ -318,7 +315,8 @@ function uiForCourse(course) {
 
   return card.build();
 }
-
+// SAVE PROCESS
+// DETECT STATE CHANGED?
 
 // Update course info in user properties according to user input
 function updateCourseInfo(e) {
@@ -355,7 +353,7 @@ function updateCourseInfo(e) {
   };
   // SUBJECT?
   
-  var course = new Subject(name, period, prt, lunch);
+  var course = new Regular_Period(name, period, prt, lunch);
   userProperties.setProperty(REGULAR_PREFIX+course.name, JSON.stringify(course));
 
   var toHomePage = CardService.newNavigation().popToNamedCard("homePage").updateCard(homePage());

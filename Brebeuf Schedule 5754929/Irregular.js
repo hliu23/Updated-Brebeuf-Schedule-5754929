@@ -80,25 +80,11 @@ function irregularClass(e) {
   // CONVERT BACK
 }
 
-class Irregular_Period {
-  constructor(name, day, period, prt, lunch) {
-    this.name = name;
-    this.day = day;
-    this.period = period;
-    this.prt = prt;
-    this.lunch = lunch;
-  };
-}
+
 // FROM STARTING DATE?
 // FROM STARTING TIME?
 
-class Irregular_PRT {
-  constructor(name, day, prt) {
-    this.name = name;
-    this.day = day;
-    this.prt = prt;
-  };
-}
+
 // MAP?
 
 function setPeriodClass(e) {
@@ -124,6 +110,7 @@ function setPeriodClass(e) {
 
   var card = CardService.newCardBuilder()
     .addSection(section);
+
   
   return card.build();
 }
@@ -136,9 +123,10 @@ function setPrtClass(e) {
 // day, morning? prt
 
 function uiForIrregularPeriodClass(course) {
+  // SEARCH BY CLASS NAME?
   var subject;
   if (course != null) subject = JSON.parse(userProperties.getProperty(IRREGULAR_PREFIX+course));
-  else subject = new Subject("", null, null, null);
+  else subject = new Regular_Period("", null, null, null);
     
   var courseName = CardService.newTextInput()
     .setFieldName("name_input")
