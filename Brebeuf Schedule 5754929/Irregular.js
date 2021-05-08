@@ -80,6 +80,7 @@ function irregularClass(e) {
   // CONVERT BACK
 }
 
+// TESTED: POSSIBLE TO PASS IN HALF-FINISHED CARD AS ARG, ADD ELEMENTS TO IT, THEN RETURN THE WHOLE CARD BUILT
 
 // FROM STARTING DATE?
 // FROM STARTING TIME?
@@ -91,7 +92,7 @@ function setPeriodClass(e) {
   // HIDDEN SETTINGS?
   // userProperties.setProperty(USER_PREFIX+"courseStateChanged", true);
   var classInfo = e.parameters.classInfo;
-  var classInfo = JSON.parse(classInfo);
+  classInfo = JSON.parse(classInfo);
   // MORE EFFICIENT WAY?
   var nameVal = classInfo[0];
   var periodVal = classInfo[1];
@@ -122,58 +123,3 @@ function setPrtClass(e) {
 // day, period, prt, lunch
 // day, morning? prt
 
-function uiForIrregularPeriodClass(course) {
-  // SEARCH BY CLASS NAME?
-  var subject;
-  if (course != null) subject = JSON.parse(userProperties.getProperty(IRREGULAR_PREFIX+course));
-  else subject = new Regular_Period("", null, null, null);
-    
-  var courseName = CardService.newTextInput()
-    .setFieldName("name_input")
-    .setTitle("Course Name")
-    .setValue(subject.name);
-    
-  var periodNum = CardService.newTextInput()
-    .setFieldName("period_input")
-    .setTitle("Period Number");
-
-  if (subject.period != null) periodNum.setValue(subject.period.toString());
-
-  if (course == null) status = "!nullnullnullnullnullnullnullnullnullnull!";
-  else status = course.toString();
-  
-  var saveButton = CardService.newTextButton()
-    .setText("Save Changes")
-    .setTextButtonStyle(CardService.TextButtonStyle.FILLED)
-    .setBackgroundColor("#761113")
-    .setOnClickAction(CardService.newAction()
-      .setFunctionName("updateCourseInfo")
-      .setParameters({subject: subject.name, status: status}));
-
-
-  var deleteButton = CardService.newTextButton()
-    .setText("Delete Course")
-    .setTextButtonStyle(CardService.TextButtonStyle.FILLED)
-    .setBackgroundColor("#DEAC3F")
-    .setOnClickAction(CardService.newAction()
-      .setFunctionName("deleteCourse")
-      .setParameters({subject: subject.name, status: status}));
-
-  var cardButtonSet = CardService.newButtonSet()
-    .addButton(saveButton)
-    .addButton(deleteButton);
-    
-  var section = CardService.newCardSection()
-    .addWidget(courseName)
-    .addWidget(periodNum)
-    .addWidget(irregularClass)
-    .addWidget(prt)
-    .addWidget(lunch)
-    .addWidget(cardButtonSet);
-    
-
-  var card = CardService.newCardBuilder()  
-    .addSection(section);
-
-  return card.build();
-}

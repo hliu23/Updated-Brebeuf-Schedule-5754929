@@ -13,7 +13,7 @@ function testFunc(func, testCases) {
   var currentTestCases = JSON.parse(testCases);
   Logger.log("Testing: "+ "func.toString()");
   
-  for (x of currentTestCases) {
+  for (let x of currentTestCases) {
     let testResult = testCase(func, x[0], x[1]);
     Logger.log(x);
     if (testResult != true) {
@@ -45,10 +45,3 @@ function test(){
 
 // DECLARATION
 // STORE OBJECT? LIST OF INPUT AND OUTPUT FOR A PARTICULAR FUNCTION
-
-function test2(){
-  var subject = new Regular_Period("123", 3, "A", "C");
-  Logger.log(test);
-  
-}
-

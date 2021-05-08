@@ -16,7 +16,7 @@ const IRREGULAR_PREFIX = "IRREG_";
 const USER_PREFIX = "USER_";
 
 function update() {
-  const CURRENT_VERSION = "2021-05-07-1";
+  const CURRENT_VERSION = "2021-05-07-2";
   var version = userProperties.getProperty(USER_PREFIX+"version");
   if (version == null || version != CURRENT_VERSION) {
     // UPDATES
@@ -32,7 +32,7 @@ function regularPeriodPropKeys() {
   function filterRegular(key) {
     var keep = key.startsWith(REGULAR_PREFIX);
     return keep;
-  } 
+  }
   var regularPeriodPropKeys = userPropKeys.filter(filterRegular);
 
   return regularPeriodPropKeys;
@@ -43,7 +43,7 @@ function regularPeriodPropKeys() {
 function getRegularPeriodProp() {
   var regPeriodPropKeys = regularPeriodPropKeys();
   var regularPeriodProp = [];
-  for (x of regPeriodPropKeys) {
+  for (let x of regPeriodPropKeys) {
     var prop = userProperties.getProperty(x);
     prop = JSON.parse(prop);
     regularPeriodProp.push(prop);
@@ -158,5 +158,7 @@ function lunchOptions(unselectedOption, lunchVal) {
 
   return lunch;
 }
+
+
 
 // PRIVACY

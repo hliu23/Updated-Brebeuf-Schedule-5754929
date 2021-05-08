@@ -18,7 +18,7 @@ function checkEvents() {
     var periodNum = [];
     var schedule = [];
 
-    for (x in courseProperties) {
+    for (let x in courseProperties) {
       course = JSON.parse(courseProperties[x]);
       courseNum = parseInt(course.period, 10);
       courseName = course.name;
@@ -31,18 +31,18 @@ function checkEvents() {
         throw new Error("Please make sure \"" + courseName + "\" has a PRT letter.");
       } else if (course.lunch == null) {
         throw new Error("Please make sure \"" + courseName + "\" has a lunch letter.");
-      };
-    };
+      }
+    }
 
     
     var setPeriodNum = [...new Set(periodNum)];
     if (periodNum.length > setPeriodNum.length) {
       throw new Error("Please make sure no two courses have the same period number.");
-    };
+    }
   }
   catch (err) {
     return newNotify(err.message);
-  };
+  }
 
   return createCalendar(schedule);
 }
@@ -59,6 +59,7 @@ function createCalendar(schedule) {
     var res = UrlFetchApp.fetch("https://www.googleapis.com/calendar/v3/users/me/calendarList/" + calProperty, PARAMS);
     resCode = res.getResponseCode();
 
+    var calId;
     if (calProperty == null || resCode != 200 || courseStateChanged == "true") {
       var calendar = CalendarApp.createCalendar("Brebeuf Schedule 5754929", {
         summary: "A calendar with scheduled personalized reminders at Brebeuf class time.",
@@ -66,21 +67,21 @@ function createCalendar(schedule) {
       });
       calendar.setColor("#761113");
 
-      var calId = calendar.getId();
+      calId = calendar.getId();
 
       userProperties.setProperty(USER_PREFIX+"calendarId", calId);
       if (resCode != 200 || courseStateChanged == "true") {
         userProperties.deleteProperty(USER_PREFIX+"lastCompletedDate");
-      };
+      }
       
-    } else var calId = calProperty;
+    } else calId = calProperty;
 
     return eventsCard(calId, schedule);
   }
   catch (err) {
     console.log(err);
     return newNotify("Calendar creation failed. Please refresh the page. If error persists, report through \"Feedback\" feature in the menu.");
-  };
+  }
 }
 
 // Build card with button that creates events of this 8-day cycle upon clicking
@@ -114,13 +115,14 @@ function createEvents(e) {
   var schedule = JSON.parse(e.parameters.schedule);
   
   var lastDate = userProperties.getProperty(USER_PREFIX+"lastCompletedDate");
+  var startDate;
   if (lastDate == null) {
-    var startDate = new Date();
+    startDate = new Date();
     startDate.setHours(0,0,0,0);
   } else {
-    var startDate = new Date(Number(lastDate));
+    startDate = new Date(Number(lastDate));
     startDate.setDate(startDate.getDate() + 1);
-  };
+  }
 
   var currentDate = new Date(startDate);
   var msCurrentDate = Date.parse(startDate);
@@ -156,7 +158,7 @@ function batchRequests() {
 
   var payload = "--" + BOUNDARY + "\r\nContent-Type: application/http\r\n\r\n" + firstRequest[0].method + " " + firstRequest[0].endpoint + "\r\nContent-Type: application/json\r\n\r\n" + JSON.stringify(firstRequest[0].body) + "\r\n\r\n";
 
-  for (i in requests) {
+  for (let i in requests) {
     let event = requests[i];
     let req = "--" + BOUNDARY + "\r\nContent-Type: application/http\r\n\r\n" + event.method + " " + event.endpoint + "\r\nContent-Type: application/json\r\n\r\n" + JSON.stringify(event.body) + "\r\n\r\n";
     payload += req;
@@ -176,7 +178,7 @@ function createEventsOfDay(calId, schedule, currentDate) {
   if (brDay != null) {
 
     var cOrder = classOrder(brDay);
-    for (n in cOrder) {
+    for (let n in cOrder) {
   
       let currentPeriodNum = cOrder[n];
       let course = schedule[currentPeriodNum];
@@ -320,8 +322,8 @@ function createEventsOfDay(calId, schedule, currentDate) {
 }
 
 // Return the number of entered date in the Brebeuf 8-day cycle
-function brebeufDay(enteredDate) {
-  var enteredDate = new Date(enteredDate);
+function brebeufDay(enterDate) {
+  var enteredDate = new Date(enterDate);
   enteredDate.setHours(0,0,0,0);
 
   // SCRIPT PROPERTIES?
@@ -341,10 +343,10 @@ function brebeufDay(enteredDate) {
 
   var specialDays = [];
   var extendedBreak = [];
-  for (x in SPECIAL_DAY) {
+  for (let x in SPECIAL_DAY) {
     specialDays[x] = new Date(SPECIAL_DAY[x]);
   }
-  for (y in EXTENDED_BREAK) {
+  for (let y in EXTENDED_BREAK) {
     let startDate = new Date(EXTENDED_BREAK[y][0]);
     let endDate = new Date(EXTENDED_BREAK[y][1]);
     extendedBreak[y] = [startDate, endDate];
@@ -364,10 +366,10 @@ function brebeufDay(enteredDate) {
   else if (enteredDate.getTime() < day_one.getTime()) brebeufDay = null;
   else if (enteredDate.getDay() == 6 || enteredDate.getDay() == 0) brebeufDay = null;
   else {
-    for (s of specialDays) {
+    for (let s of specialDays) {
       if (enteredDate.getTime() == s.getTime()) brebeufDay = null;
-    };
-    for (e of extendedBreak) {
+    }
+    for (let e of extendedBreak) {
         if (enteredDate.getTime() >= e[0].getTime() && enteredDate.getTime() <= e[1].getTime()) brebeufDay = null;
     }
     
@@ -381,7 +383,7 @@ function brebeufDay(enteredDate) {
 
         if (!(dayTest.getDay() == 6 || dayTest.getDay() == 0)) {
           var breakDay = false;
-          for (y of specialDays) {
+          for (let y of specialDays) {
             if (dayTest.getTime() == y.getTime()) breakDay = true;
           }
           if (!breakDay) dayCount ++;
@@ -401,13 +403,9 @@ function brebeufDay(enteredDate) {
 function classOrder(n) {
   const START_ORDER = [1,8,6,5,3];
   var classOrder = new Array(...START_ORDER);
-  for (x in classOrder) {
+  for (let x in classOrder) {
     classOrder[x] = (classOrder[x] + n - 1) % 8;
     if (classOrder[x] == 0) classOrder[x] = 8;
   }
   return classOrder;
-}
-
-function temporary() {
-  userProperties.deleteProperty(USER_PREFIX+"calendarId");
 }

@@ -35,15 +35,15 @@ function homePage() {
   var courseSection = CardService.newCardSection();
   var courseList = sortCourses();
   if (courseList.length == 0) {
-    const PROMPT = "No course information stored. \n\nRetrieve courses from Google Classroom by clicking on the first button above."
+    const PROMPT = "No course information stored. \n\nRetrieve courses from Google Classroom by clicking on the first button above.";
     var textExplanation = CardService.newTextParagraph()
       .setText(PROMPT);
     courseSection.addWidget(textExplanation);
   } else {
-    for (x in courseList) {
+    for (let x in courseList) {
       var courseButtonSet = createToCardButtonSet(courseList[x]);
       courseSection.addWidget(courseButtonSet);
-    };
+    }
   }
   
   var calendarSection = CardService.newCardSection();
@@ -71,22 +71,22 @@ function initialize() {
   if (response.length == 0) {
     res = UrlFetchApp.fetch("https://classroom.googleapis.com/v1/courses?courseStates=ACTIVE&teacherId=me&fields=courses/name", PARAMS);
     response = JSON.parse(res).courses;
-  };
+  }
 
   var courseList = [];
-  for (x in response) {
+  for (let x in response) {
     courseList[x] = response[x].name; 
-  };
+  }
 
   // Delete previously stored courses
-  for (x of regularPeriodPropKeys()) {
+  for (let x of regularPeriodPropKeys()) {
     userProperties.deleteProperty(x);
-  };
+  }
 
-  for (y in courseList) {
+  for (let y in courseList) {
     var subject = infoFromCourseName(courseList[y]);
     userProperties.setProperty(REGULAR_PREFIX+subject.name.toString(), JSON.stringify(subject));
-  };
+  }
 
   var toHomePage = CardService.newNavigation().popToNamedCard("homePage").updateCard(homePage());
 
@@ -102,44 +102,42 @@ function initialize() {
 function sortCourses() {
   // JSON?
   var courseProperties = getRegularPeriodProp();
-  console.log(courseProperties);
 
   var periodNull = [];
   var periodExisting = [];
   var courseList = [];
 
-  for (n in courseProperties) {
-    var subject = courseProperties[n];
-    console.log(subject);
+  for (let n in courseProperties) {
+    let subject = courseProperties[n];
     if (subject.period == null) periodNull.push(subject.name);
     else periodExisting.push(subject);
-  };
+  }
   
   var periodNum = [];
-  for (i in periodExisting) {
+  for (let i in periodExisting) {
     periodNum.push(parseInt(periodExisting[i].period, 10));
-  };
+  }
 
   var copyPeriodExisting = [...periodExisting];
 
   while (copyPeriodExisting.length > 0) {
     periodExisting = [...copyPeriodExisting];
     checkLoop:
-    for (i in periodExisting) {
+    for (let i in periodExisting) {
       var nextNum = Math.min(...periodNum);
       if (periodExisting[i].period == nextNum) {
         courseList.push(periodExisting[i].name);
         copyPeriodExisting.splice(i,1);
         periodNum.splice(i,1);
         break checkLoop;
-      };
-    };
-  };
+      }
+    }
+  }
 
   periodNull.sort();
-  for (i of periodNull) {
+  for (let i of periodNull) {
     courseList.push(i);
-  };
+  }
 
   return courseList;
 }
@@ -147,7 +145,6 @@ function sortCourses() {
 
 // Create buttons that can be checked on to view detailed info about classes
 function createToCardButtonSet(name) {
-  console.log("set "+name);
   var gotoCourse = CardService.newAction()
     .setFunctionName("gotoCourse")
     .setParameters({name: name.toString()});
@@ -163,7 +160,7 @@ function createToCardButtonSet(name) {
   var buttonText = name.slice(0);
   if (buttonText.length > MAX_TEXT_LENGTH) {
     buttonText = buttonText.slice(0, MAX_TEXT_LENGTH);
-  };
+  }
 
   var textButton = CardService.newTextButton()
     .setText(buttonText)
@@ -199,16 +196,18 @@ function infoFromCourseName(courseName) {
   var convertedCourseName = courseName.toUpperCase();
   let prtSearchWord = "PRT ";
   var prtPosition = convertedCourseName.search(prtSearchWord);
+  var prtLetter;
   if (prtPosition !== -1) {
-    var prtLetter = convertedCourseName.slice((prtPosition + prtSearchWord.length), (prtPosition + prtSearchWord.length+1));
+    prtLetter = convertedCourseName.slice((prtPosition + prtSearchWord.length), (prtPosition + prtSearchWord.length+1));
     if (prtLetter !== "A" && prtLetter !== "B") prtLetter = null;
   } else prtLetter = null;
 
   let lunchSearchWord = "LUNCH ";
   var lunchPosition = convertedCourseName.search(lunchSearchWord);
 
+  var lunchLetter;
   if (lunchPosition !== -1) {
-    var lunchLetter = convertedCourseName.slice((lunchPosition + lunchSearchWord.length), (lunchPosition + lunchSearchWord.length+1));
+    lunchLetter = convertedCourseName.slice((lunchPosition + lunchSearchWord.length), (lunchPosition + lunchSearchWord.length+1));
     if (lunchLetter !== "A" && lunchLetter !== "B" && lunchLetter !== "C") lunchLetter = null;
   } else lunchLetter = null;
 
@@ -232,7 +231,6 @@ function infoFromCourseName(courseName) {
   }
 
   var courseInfo = new Regular_Period(courseName, periodNum, prtLetter, lunchLetter);
-  console.log("infoFrom "+courseInfo);
   return courseInfo;
 }
 
@@ -326,14 +324,14 @@ function updateCourseInfo(e) {
   try {
     var name = e.commonEventObject.formInputs["name_input"].stringInputs.value[0];
     var period = e.commonEventObject.formInputs["period_input"].stringInputs.value[0];
-    if (period == " ") throw new TypeError;
-    else if (isNaN(period)) throw new TypeError;
-    else if (period < 1 || period > 8) throw new TypeError;
+    if (period == " ") throw new TypeError();
+    else if (isNaN(period)) throw new TypeError();
+    else if (period < 1 || period > 8) throw new TypeError();
 
     var prt = e.commonEventObject.formInputs["prt_input"].stringInputs.value[0];
     var lunch = e.commonEventObject.formInputs["lunch_input"].stringInputs.value[0];
   
-    if (prt == "null" || lunch == "null") throw new TypeError;
+    if (prt == "null" || lunch == "null") throw new TypeError();
   }
   // Catch TypeError
   catch (err) {
@@ -342,7 +340,7 @@ function updateCourseInfo(e) {
       throw err;
     }
     else return newNotify("Please make sure all the fields are filled in correctly.");
-  };
+  }
   
   var subjectName = e.parameters.subjectName;
   var status = e.parameters.status;
@@ -350,7 +348,7 @@ function updateCourseInfo(e) {
   period = parseInt(period, 10);
   if (status !== NULL_STRING) {
     userProperties.deleteProperty(REGULAR_PREFIX+subjectName);
-  };
+  }
   // SUBJECT?
   
   var course = new Regular_Period(name, period, prt, lunch);
@@ -387,7 +385,7 @@ function deleteCourse(e) {
 // Delete course from user properties from home page
 function deleteCourseFromMenu(e) {
   userProperties.setProperty(USER_PREFIX+"courseStateChanged", true);
-  subject = e.parameters.name;
+  var subject = e.parameters.name;
   userProperties.deleteProperty(REGULAR_PREFIX+subject);
   var updateHomePage = CardService.newNavigation().updateCard(homePage());
   return CardService.newActionResponseBuilder()

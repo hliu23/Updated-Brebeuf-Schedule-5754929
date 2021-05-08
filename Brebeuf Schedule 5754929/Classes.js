@@ -20,7 +20,7 @@ class Course {
     return {
       name: this.name,
       prt: this.prt
-    }
+    };
   }
 }
 
@@ -51,7 +51,7 @@ class Regular_Period extends Course {
       period: this.period,
       prt: this.prt,
       lunch: this.lunch
-    }
+    };
   }
 }
 
@@ -75,7 +75,7 @@ class Irregular_Period extends Regular_Period {
       prt: this.prt,
       lunch: this.lunch,
       day: this.day
-    }
+    };
   }
 }
 
@@ -97,7 +97,7 @@ class Irregular_PRT extends Course {
       name: this.name,
       prt: this.prt,
       day: this.day
-    }
+    };
   }
 }
 
