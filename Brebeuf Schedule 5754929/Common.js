@@ -25,12 +25,17 @@ function update() {
   userProperties.setProperty(USER_PREFIX+"version", CURRENT_VERSION);
 }
 
-function underMaintenance(estimatedTimeUp) {
+function underMaintenance(estimatedTimeUp = null) {
   // NEW DATE?
-  const ESTIMATED_TIME_UP = new Date(estimatedTimeUp);
-  const MAINTENANCE = "This add-on is undergoing maintenance and is currently unavailable. Please check again after " + ESTIMATED_TIME_UP + ". Thank you for your patience!";
+  if (estimatedTimeUp !== null) {
+    const ESTIMATED_TIME_UP = new Date(estimatedTimeUp);
+    var maintenance = "This add-on is undergoing maintenance and is currently unavailable. Please check again after " + ESTIMATED_TIME_UP + ". Thank you for your patience!";
+  } else {
+    var maintenance = "This add-on is undergoing maintenance and is currently unavailable. Please check again later. Thank you for your patience!";
+  }
+  
   var text = CardService.newTextParagraph()
-    .setText(MAINTENANCE);
+    .setText(maintenance);
   var section = CardService.newCardSection()
     .addWidget(text);
   var card = CardService.newCardBuilder()
@@ -106,77 +111,6 @@ function newNotify(text) {
         .setText(text))
     .build();
 }
-
-// REPLACED - START?
-function prtOptions(unselectedOption, prtVal) {
-  const UNSELECTED_OPTION = unselectedOption;
-
-  var prt = CardService.newSelectionInput()
-    .setType(CardService.SelectionInputType.RADIO_BUTTON)
-    .setTitle("PRT")
-    .setFieldName("prt_input");
-
-  switch (prtVal) {
-    case ("A"):
-      prt.addItem("A", "A", true)
-      .addItem("B", "B", false)
-      .addItem(UNSELECTED_OPTION, null, false);
-      break;
-    case ("B"): 
-      prt.addItem("A", "A", false)
-      .addItem("B", "B", true)
-      .addItem(UNSELECTED_OPTION, null, false);
-      break;
-    default:
-      prt.addItem("A", "A", false)
-      .addItem("B", "B", false)
-      .addItem(UNSELECTED_OPTION, null, true);
-      break;
-  } 
-
-  return prt;
-}
-
-
-function lunchOptions(unselectedOption, lunchVal) {
-  const UNSELECTED_OPTION = unselectedOption;
-
-  var lunch = CardService.newSelectionInput()
-    .setType(CardService.SelectionInputType.RADIO_BUTTON)
-    .setTitle("Lunch")
-    .setFieldName("lunch_input");
-
-  switch (lunchVal) {
-    case ("A"):
-      lunch.addItem("A", "A", true)
-      .addItem("B", "B", false)
-      .addItem("C", "B", false)
-      .addItem(UNSELECTED_OPTION, null, false);
-      break;
-    case ("B"):
-      lunch.addItem("A", "A", false)
-      .addItem("B", "B", true)
-      .addItem("C", "C", false)
-      .addItem(UNSELECTED_OPTION, null, false);
-      break;
-    case ("C"):
-      lunch.addItem("A", "A", false)
-      .addItem("B", "B", false)
-      .addItem("C", "C", true)
-      .addItem(UNSELECTED_OPTION, null, false);
-      break;
-    default:
-      lunch.addItem("A", "A", false)
-      .addItem("B", "B", false)
-      .addItem("C", "C", false)
-      .addItem(UNSELECTED_OPTION, null, true);
-      break;
-  }
-
-  return lunch;
-}
-
-// REPLACED - END?
 
 
 // PRIVACY

@@ -312,6 +312,9 @@ class Irregular_PRT extends Course {
   }
 }
 
+  // const UNSELECTED_OPTION = "No selection found. Select an option.";
+
+
 // READABILITY?
   
 // CREATE IRREGULAR COURSE
@@ -323,6 +326,7 @@ class Irregular_PRT extends Course {
 // NULL_STRING
 // CHECK FOR ERROR THERE
 // DAY TO TOP CLASS?
+// IRREGULAR
 
 // COMMON & TEST: BUGS
 

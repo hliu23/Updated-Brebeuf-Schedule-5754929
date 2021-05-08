@@ -14,12 +14,12 @@
 
 // SCRIPT PROPERTIES?
 
-
+// FILL IN: CONST?
 // Save all possible class times in script properties; information comes from the schedule Brebeuf released
 function toHomePage() {
-  var down = true;
-  if (down == true) {
-    return underMaintenance("May 8, 2021, 8:00 PM"); 
+  const DOWN = false;
+  if (DOWN == true) {
+    return underMaintenance(); 
   } else {
     update();
     userProperties.setProperty(USER_PREFIX+"courseStateChanged", false);
@@ -183,6 +183,8 @@ function createToCardButtonSet(name) {
 function gotoCourse(e) {
   var name = e.parameters.name;  
   var subject = JSON.parse(userProperties.getProperty(REGULAR_PREFIX+name));
+  subject = Object.assign(new Regular_Period, subject);
+  
   var status = name.toString();
 
   var navUi = CardService.newNavigation().pushCard(subject.build(status));
@@ -249,91 +251,17 @@ function infoFromCourseName(courseName) {
   return courseInfo;
 }
 
-// REPLACED? - START
 
 // WHAT IF VAR COURSE IS NOT STORED IN USERPROPERTIES?
 // Create a detailed class info page that allows the user to alter the class name, period number, PRT and lunch letter and save changes (if all fields are filled in as expected) or delete the course
-function uiForCourse(course) {
 
-  // NEWLY CREATED COURSE
-  const NULL_STRING = "!nullnullnullnullnullnullnullnullnullnull!";
 
-  var subject; 
-  var status;
-  // NAME CHANGE?
-  if (course != null) {
-    subject = JSON.parse(userProperties.getProperty(REGULAR_PREFIX+course));
-    status = course.toString();
-  } else {
-    subject = new Regular_Period("", null, null, null);
-    status = NULL_STRING;
-  }
-    
-  var courseName = CardService.newTextInput()
-    .setFieldName("name_input")
-    .setTitle("Course Name")
-    .setValue(subject.name);
-    
-  var periodNum = CardService.newTextInput()
-    .setFieldName("period_input")
-    .setTitle("Period Number");
 
-  if (subject.period != null) periodNum.setValue(subject.period.toString());
-  
-  // SUBJECT AND STATUS?
-  
-  
-  var irregularClass = CardService.newTextButton()
-    .setText("Irregular Class")
-    .setOnClickAction(CardService.newAction()
-      .setFunctionName("irregularClass")
-      .setParameters({status: status}));
 
-  const UNSELECTED_OPTION = "No selection found. Select an option.";
 
-  var prtVal = prtOptions(UNSELECTED_OPTION, subject.prt);
-  var lunchVal = lunchOptions(UNSELECTED_OPTION, subject.lunch);
-
-  // TO STRING
-  
-  var saveButton = CardService.newTextButton()
-    .setText("Save Changes")
-    .setTextButtonStyle(CardService.TextButtonStyle.FILLED)
-    .setBackgroundColor("#761113")
-    .setOnClickAction(CardService.newAction()
-      .setFunctionName("updateCourseInfo")
-      .setParameters({status: status}));
-
-  var deleteButton = CardService.newTextButton()
-    .setText("Delete Course")
-    .setTextButtonStyle(CardService.TextButtonStyle.FILLED)
-    .setBackgroundColor("#DEAC3F")
-    .setOnClickAction(CardService.newAction()
-      .setFunctionName("deleteCourse")
-      .setParameters({status: status}));
-
-  var cardButtonSet = CardService.newButtonSet()
-    .addButton(saveButton)
-    .addButton(deleteButton);
-    
-  var section = CardService.newCardSection()
-    .addWidget(courseName)
-    .addWidget(periodNum)
-    .addWidget(irregularClass)
-    .addWidget(prtVal)
-    .addWidget(lunchVal)
-    .addWidget(cardButtonSet);
-    
-
-  var card = CardService.newCardBuilder()  
-    .addSection(section);
-
-  return card.build();
-}
 // SAVE PROCESS
 // DETECT STATE CHANGED?
 
-// REPLACED? - END
 // ""
 
 // Update course info in user properties according to user input
