@@ -25,6 +25,21 @@ function update() {
   userProperties.setProperty(USER_PREFIX+"version", CURRENT_VERSION);
 }
 
+function underMaintenance(estimatedTimeUp) {
+  // NEW DATE?
+  const ESTIMATED_TIME_UP = new Date(estimatedTimeUp);
+  const MAINTENANCE = "This add-on is undergoing maintenance and is currently unavailable. Please check again after " + ESTIMATED_TIME_UP + ". Thank you for your patience!";
+  var text = CardService.newTextParagraph()
+    .setText(MAINTENANCE);
+  var section = CardService.newCardSection()
+    .addWidget(text);
+  var card = CardService.newCardBuilder()
+    .addSection(section);
+  return card.build();
+  // HEADER?
+
+}
+
 
 function regularPeriodPropKeys() {
   var userPropKeys = userProperties.getKeys();
@@ -92,6 +107,7 @@ function newNotify(text) {
     .build();
 }
 
+// REPLACED - START?
 function prtOptions(unselectedOption, prtVal) {
   const UNSELECTED_OPTION = unselectedOption;
 
@@ -120,6 +136,7 @@ function prtOptions(unselectedOption, prtVal) {
 
   return prt;
 }
+
 
 function lunchOptions(unselectedOption, lunchVal) {
   const UNSELECTED_OPTION = unselectedOption;
@@ -159,6 +176,7 @@ function lunchOptions(unselectedOption, lunchVal) {
   return lunch;
 }
 
+// REPLACED - END?
 
 
 // PRIVACY

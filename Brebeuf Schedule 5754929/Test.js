@@ -43,5 +43,10 @@ function test(){
   testFunc(brebeufDay, JSON.stringify(brebeufDayTestCases));
 }
 
+function test1() {
+  var test = new Regular_Period("hdf", 2, "A", "B");
+  test.build("xtfcghgvjb");
+}
+
 // DECLARATION
 // STORE OBJECT? LIST OF INPUT AND OUTPUT FOR A PARTICULAR FUNCTION

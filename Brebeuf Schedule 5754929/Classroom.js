@@ -17,9 +17,14 @@
 
 // Save all possible class times in script properties; information comes from the schedule Brebeuf released
 function toHomePage() {
-  update();
-  userProperties.setProperty(USER_PREFIX+"courseStateChanged", false);
-  return homePage();
+  var down = true;
+  if (down == true) {
+    return underMaintenance("May 8, 2021, 8:00 PM"); 
+  } else {
+    update();
+    userProperties.setProperty(USER_PREFIX+"courseStateChanged", false);
+    return homePage();
+  }
 }
 
 // Build the homepage of the add-on, which displays all classes stored in user properties and options to retrieve class info from Classroom, create and delete classes, and create events
@@ -174,16 +179,26 @@ function createToCardButtonSet(name) {
   return buttonSet;
 }
 
+// NAME OR PROPERTY?
 function gotoCourse(e) {
-  var name = e.parameters.name;
-  var navUi = CardService.newNavigation().pushCard(uiForCourse(name));
+  var name = e.parameters.name;  
+  var subject = JSON.parse(userProperties.getProperty(REGULAR_PREFIX+name));
+  var status = name.toString();
+
+  var navUi = CardService.newNavigation().pushCard(subject.build(status));
   return CardService.newActionResponseBuilder()
     .setNavigation(navUi)
     .build();
 }
 
+// COMBINE THE TWO?
 function createCourse() {
-  var uiNull = CardService.newNavigation().pushCard(uiForCourse(null));
+  const NULL_STRING = "!nullnullnullnullnullnullnullnullnullnull!";
+  var subject = new Regular_Period("", null, null, null);
+  var status = NULL_STRING;
+
+  // CANNOT PASS NULL VAL AS E.PARAMETERS ?
+  var uiNull = CardService.newNavigation().pushCard(subject.build(status));
   return CardService.newActionResponseBuilder()
     .setNavigation(uiNull)
     .build();
@@ -234,9 +249,11 @@ function infoFromCourseName(courseName) {
   return courseInfo;
 }
 
+// REPLACED? - START
+
 // WHAT IF VAR COURSE IS NOT STORED IN USERPROPERTIES?
 // Create a detailed class info page that allows the user to alter the class name, period number, PRT and lunch letter and save changes (if all fields are filled in as expected) or delete the course
-function uiForCourse(course, courseType = "REGULAR") {
+function uiForCourse(course) {
 
   // NEWLY CREATED COURSE
   const NULL_STRING = "!nullnullnullnullnullnullnullnullnullnull!";
@@ -274,8 +291,8 @@ function uiForCourse(course, courseType = "REGULAR") {
 
   const UNSELECTED_OPTION = "No selection found. Select an option.";
 
-  var prt = prtOptions(UNSELECTED_OPTION, subject.prt);
-  var lunch = lunchOptions(UNSELECTED_OPTION, subject.lunch);
+  var prtVal = prtOptions(UNSELECTED_OPTION, subject.prt);
+  var lunchVal = lunchOptions(UNSELECTED_OPTION, subject.lunch);
 
   // TO STRING
   
@@ -285,7 +302,7 @@ function uiForCourse(course, courseType = "REGULAR") {
     .setBackgroundColor("#761113")
     .setOnClickAction(CardService.newAction()
       .setFunctionName("updateCourseInfo")
-      .setParameters({subjectName: subject.name, status: status}));
+      .setParameters({status: status}));
 
   var deleteButton = CardService.newTextButton()
     .setText("Delete Course")
@@ -293,7 +310,7 @@ function uiForCourse(course, courseType = "REGULAR") {
     .setBackgroundColor("#DEAC3F")
     .setOnClickAction(CardService.newAction()
       .setFunctionName("deleteCourse")
-      .setParameters({subjectName: subject.name, status: status}));
+      .setParameters({status: status}));
 
   var cardButtonSet = CardService.newButtonSet()
     .addButton(saveButton)
@@ -303,8 +320,8 @@ function uiForCourse(course, courseType = "REGULAR") {
     .addWidget(courseName)
     .addWidget(periodNum)
     .addWidget(irregularClass)
-    .addWidget(prt)
-    .addWidget(lunch)
+    .addWidget(prtVal)
+    .addWidget(lunchVal)
     .addWidget(cardButtonSet);
     
 
@@ -315,6 +332,9 @@ function uiForCourse(course, courseType = "REGULAR") {
 }
 // SAVE PROCESS
 // DETECT STATE CHANGED?
+
+// REPLACED? - END
+// ""
 
 // Update course info in user properties according to user input
 function updateCourseInfo(e) {
@@ -342,13 +362,10 @@ function updateCourseInfo(e) {
     else return newNotify("Please make sure all the fields are filled in correctly.");
   }
   
-  var subjectName = e.parameters.subjectName;
   var status = e.parameters.status;
   
   period = parseInt(period, 10);
-  if (status !== NULL_STRING) {
-    userProperties.deleteProperty(REGULAR_PREFIX+subjectName);
-  }
+  if (status !== NULL_STRING) userProperties.deleteProperty(REGULAR_PREFIX+status);
   // SUBJECT?
   
   var course = new Regular_Period(name, period, prt, lunch);
@@ -369,10 +386,7 @@ function deleteCourse(e) {
   userProperties.setProperty(USER_PREFIX+"courseStateChanged", true);
   var status = e.parameters.status;
 
-  if (status !== NULL_STRING) {
-    var subjectName = e.parameters.subjectName;
-    userProperties.deleteProperty(REGULAR_PREFIX+subjectName);
-  }
+  if (status !== NULL_STRING) userProperties.deleteProperty(REGULAR_PREFIX+status);
   
   var toHomePage = CardService.newNavigation().popToNamedCard("homePage").updateCard(homePage());
   return CardService.newActionResponseBuilder()

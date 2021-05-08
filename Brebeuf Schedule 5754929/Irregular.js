@@ -111,7 +111,6 @@ function setPeriodClass(e) {
 
   var card = CardService.newCardBuilder()
     .addSection(section);
-
   
   return card.build();
 }
