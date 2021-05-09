@@ -183,11 +183,12 @@ function createToCardButtonSet(name) {
 function gotoCourse(e) {
   var name = e.parameters.name;  
   var subject = JSON.parse(userProperties.getProperty(REGULAR_PREFIX+name));
-  subject = Object.assign(new Regular_Period, subject);
-  
+  subject = Object.assign(new Regular_Period(), subject);
   var status = name.toString();
 
-  var navUi = CardService.newNavigation().pushCard(subject.build(status));
+  const REG_UNSELECTED_OPTION = "No selection found. Select an option.";
+
+  var navUi = CardService.newNavigation().pushCard(subject.build(status, REG_UNSELECTED_OPTION));
   return CardService.newActionResponseBuilder()
     .setNavigation(navUi)
     .build();
@@ -257,8 +258,6 @@ function infoFromCourseName(courseName) {
 
 
 
-
-
 // SAVE PROCESS
 // DETECT STATE CHANGED?
 
@@ -269,15 +268,19 @@ function updateCourseInfo(e) {
   const NULL_STRING = "!nullnullnullnullnullnullnullnullnullnull!";
 
   userProperties.setProperty(USER_PREFIX+"courseStateChanged", true);
+  var name;
+  var period;
+  var prt;
+  var lunch;
   try {
-    var name = e.commonEventObject.formInputs["name_input"].stringInputs.value[0];
-    var period = e.commonEventObject.formInputs["period_input"].stringInputs.value[0];
+    name = e.commonEventObject.formInputs["name_input"].stringInputs.value[0];
+    period = e.commonEventObject.formInputs["period_input"].stringInputs.value[0];
     if (period == " ") throw new TypeError();
     else if (isNaN(period)) throw new TypeError();
     else if (period < 1 || period > 8) throw new TypeError();
 
-    var prt = e.commonEventObject.formInputs["prt_input"].stringInputs.value[0];
-    var lunch = e.commonEventObject.formInputs["lunch_input"].stringInputs.value[0];
+    prt = e.commonEventObject.formInputs["prt_input"].stringInputs.value[0];
+    lunch = e.commonEventObject.formInputs["lunch_input"].stringInputs.value[0];
   
     if (prt == "null" || lunch == "null") throw new TypeError();
   }

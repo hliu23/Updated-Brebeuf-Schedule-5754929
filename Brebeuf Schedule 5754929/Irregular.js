@@ -2,16 +2,19 @@
 function irregularClass(e) {
   // MARK CHANGED; RETAIN INFO; DELETE OLD PROPERTY
   // NOTE: SEPARATED INTO DIFFERENT STATEMENTS BECAUSE MULTIPLE ERRORS MAY EXIST
+
+  var name;
   try {
-    var name = e.commonEventObject.formInputs["name_input"].stringInputs.value[0];
+    name = e.commonEventObject.formInputs["name_input"].stringInputs.value[0];
   } catch (err) {
     if (err.name !== "TypeError") {
       console.log(err);
       throw err;
     } else name = null;
   }
+  var period;
   try {
-    var period = e.commonEventObject.formInputs["period_input"].stringInputs.value[0];
+    period = e.commonEventObject.formInputs["period_input"].stringInputs.value[0];
   } catch (err) {
     if (err.name !== "TypeError") {
       console.log(err);
@@ -30,10 +33,8 @@ function irregularClass(e) {
   if (lunch == "null") lunch = null;
   // STRING INSTEAD OF NULL
 
+  var classInfo = [name, period, prt, lunch];
   var status = e.parameters.status;
-  var classInfo = [name, period, prt, lunch, status];
-
-
   var courseName;
   if (name == null) courseName = "Untitled";
   else courseName = name;
@@ -48,7 +49,7 @@ function irregularClass(e) {
     .setText("Meeting during Class Period")
     .setOnClickAction(CardService.newAction()
       .setFunctionName("setPeriodClass")
-      .setParameters({classInfo: JSON.stringify(classInfo)}))
+      .setParameters({classInfo: JSON.stringify(classInfo), status: status}))
     .setTextButtonStyle(CardService.TextButtonStyle.FILLED)
     .setBackgroundColor("#761113");
 
@@ -56,7 +57,7 @@ function irregularClass(e) {
     .setText("Meeting during PRT")
     .setOnClickAction(CardService.newAction()
       .setFunctionName("setPrtClass")
-      .setParameters({classInfo: JSON.stringify(classInfo)}))
+      .setParameters({classInfo: JSON.stringify(classInfo), status: status}))
     .setTextButtonStyle(CardService.TextButtonStyle.FILLED)
     .setBackgroundColor("#DEAC3F");
   
@@ -80,45 +81,23 @@ function irregularClass(e) {
   // CONVERT BACK
 }
 
-// TESTED: POSSIBLE TO PASS IN HALF-FINISHED CARD AS ARG, ADD ELEMENTS TO IT, THEN RETURN THE WHOLE CARD BUILT
-
 // FROM STARTING DATE?
 // FROM STARTING TIME?
 
-
-// MAP?
+// JSON
 
 function setPeriodClass(e) {
   // HIDDEN SETTINGS?
-  // userProperties.setProperty(USER_PREFIX+"courseStateChanged", true);
   var classInfo = e.parameters.classInfo;
   classInfo = JSON.parse(classInfo);
-  // MORE EFFICIENT WAY?
-  var nameVal = classInfo[0];
-  var periodVal = classInfo[1];
-  var prtVal = classInfo[2];
-  var lunchVal = classInfo[3];
-  var status = classInfo[4];
 
-  const UNSELECTED_OPTION = "N/A";
+  var subject = new Irregular_Period(classInfo[0], classInfo[1], classInfo[2], classInfo[3], null);
+  return subject.build(e.parameters.status);
 
-  var prt = prtOptions(UNSELECTED_OPTION, prtVal);
-  var lunch = lunchOptions(UNSELECTED_OPTION, lunchVal);
-
-  var section = CardService.newCardSection()
-    .addWidget(prt)
-    .addWidget(lunch);
-
-  var card = CardService.newCardBuilder()
-    .addSection(section);
-  
-  return card.build();
+  // IN TITLE / IN SECTION? SEPARATE FUNCTION TO SEARCH FOR
+  // STATUS
 }
 
 function setPrtClass(e) {
-  userProperties.setProperty(USER_PREFIX+"courseStateChanged", true);
+  
 }
-
-// day, period, prt, lunch
-// day, morning? prt
-

@@ -129,6 +129,7 @@ class Regular_Period extends Course {
     return periodNum;
   }
 
+  // NOT DELETE DEFAULT BECAUSE USE METHOD IN MORE THAN ONE PLACE?
   lunchVal(UNSELECTED_OPTION = "N/A") {
     var lunch = CardService.newSelectionInput()
       .setType(CardService.SelectionInputType.RADIO_BUTTON)
@@ -174,12 +175,12 @@ class Regular_Period extends Course {
     return irregularButton;
   }
 
-  build(status) {
+  build(status, unselectedOption = "N/A") {
     var courseName = this.courseName();
     var periodNum = this.periodNum();
     var irregularButton = this.irregularButton(status);
-    var prtVal = this.prtVal();
-    var lunchVal = this.lunchVal()
+    var prtVal = this.prtVal(unselectedOption);
+    var lunchVal = this.lunchVal(unselectedOption);
     var saveAndDelete = this.saveAndDelete(status);
 
     var section = CardService.newCardSection()
@@ -234,7 +235,7 @@ class Irregular_Period extends Regular_Period {
     var dayNum = this.dayNum();
     var periodNum = this.periodNum();
     var prtVal = this.prtVal();
-    var lunchVal = this.lunchVal()
+    var lunchVal = this.lunchVal();
     var saveAndDelete = this.saveAndDelete(status);
 
     var section = CardService.newCardSection()
@@ -312,17 +313,12 @@ class Irregular_PRT extends Course {
   }
 }
 
-  // const UNSELECTED_OPTION = "No selection found. Select an option.";
-
 
 // READABILITY?
   
 // CREATE IRREGULAR COURSE
 
 
-// BUILD
-// CALLS
-// DELETE
 // NULL_STRING
 // CHECK FOR ERROR THERE
 // DAY TO TOP CLASS?
