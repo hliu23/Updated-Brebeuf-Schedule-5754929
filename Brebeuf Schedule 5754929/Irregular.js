@@ -99,5 +99,11 @@ function setPeriodClass(e) {
 }
 
 function setPrtClass(e) {
-  
+  var classInfo = e.parameters.classInfo;
+  classInfo = JSON.parse(classInfo);
+  // name, prt, day, amPm
+  // PERIOD TO PRT?
+
+  var subject = new Irregular_PRT(classInfo[0], classInfo[2], null, null);
+  return subject.build(e.parameters.status, unselectedOption = null);
 }

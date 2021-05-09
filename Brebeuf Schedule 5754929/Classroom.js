@@ -302,6 +302,8 @@ function updateCourseInfo(e) {
   var course = new Regular_Period(name, period, prt, lunch);
   userProperties.setProperty(REGULAR_PREFIX+course.name, JSON.stringify(course));
 
+  // PM NO SECOND PRT
+
   var toHomePage = CardService.newNavigation().popToNamedCard("homePage").updateCard(homePage());
   return CardService.newActionResponseBuilder()
     .setNavigation(toHomePage)

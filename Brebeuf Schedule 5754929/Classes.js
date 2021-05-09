@@ -43,18 +43,18 @@ class Course {
     switch (this.prt) {
       case ("A"):
         prt.addItem("A", "A", true)
-          .addItem("B", "B", false)
-          .addItem(UNSELECTED_OPTION, null, false);
+          .addItem("B", "B", false);
+        if (UNSELECTED_OPTION !== null) prt.addItem(UNSELECTED_OPTION, null, false);
         break;
       case ("B"): 
         prt.addItem("A", "A", false)
           .addItem("B", "B", true)
-          .addItem(UNSELECTED_OPTION, null, false);
+        if (UNSELECTED_OPTION !== null) prt.addItem(UNSELECTED_OPTION, null, false);
         break;
       default:
         prt.addItem("A", "A", false)
           .addItem("B", "B", false)
-          .addItem(UNSELECTED_OPTION, null, true);
+        if (UNSELECTED_OPTION !== null) prt.addItem(UNSELECTED_OPTION, null, true);
         break;
     }
     return prt;
@@ -141,25 +141,25 @@ class Regular_Period extends Course {
         lunch.addItem("A", "A", true)
           .addItem("B", "B", false)
           .addItem("C", "B", false)
-          .addItem(UNSELECTED_OPTION, null, false);
+        if (UNSELECTED_OPTION !== null) lunch.addItem(UNSELECTED_OPTION, null, false);
         break;
       case ("B"):
         lunch.addItem("A", "A", false)
           .addItem("B", "B", true)
           .addItem("C", "C", false)
-          .addItem(UNSELECTED_OPTION, null, false);
+        if (UNSELECTED_OPTION !== null) lunch.addItem(UNSELECTED_OPTION, null, false);
         break;
       case ("C"):
         lunch.addItem("A", "A", false)
           .addItem("B", "B", false)
           .addItem("C", "C", true)
-          .addItem(UNSELECTED_OPTION, null, false);
+        if (UNSELECTED_OPTION !== null) lunch.addItem(UNSELECTED_OPTION, null, false);
         break;
       default:
         lunch.addItem("A", "A", false)
           .addItem("B", "B", false)
           .addItem("C", "C", false)
-          .addItem(UNSELECTED_OPTION, null, true);
+        if (UNSELECTED_OPTION !== null) lunch.addItem(UNSELECTED_OPTION, null, true);
         break;
     }
     return lunch;
@@ -230,12 +230,12 @@ class Irregular_Period extends Regular_Period {
     return dayNum;
   }
 
-  build(status) {
+  build(status, unselectedOption = "N/A") {
     var courseName = this.courseName();
     var dayNum = this.dayNum();
     var periodNum = this.periodNum();
-    var prtVal = this.prtVal();
-    var lunchVal = this.lunchVal();
+    var prtVal = this.prtVal(unselectedOption);
+    var lunchVal = this.lunchVal(unselectedOption);
     var saveAndDelete = this.saveAndDelete(status);
 
     var section = CardService.newCardSection()
@@ -291,18 +291,29 @@ class Irregular_PRT extends Course {
     return dayNum;
   }
 
-  build(status) {
+  amPm() {
+    var amPm = CardService.newSelectionInput()
+      .setType(CardService.SelectionInputType.RADIO_BUTTON)
+      .setFieldName("ampm_input")
+      .setTitle("AM or PM PRT")
+      .addItem("AM", "AM", false)
+      .addItem("PM", "PM", false);
+    return amPm;
+    // TITLE, VALUE
+  }
+
+  build(status, unselectedOption = "N/A") {
     var courseName = this.courseName();
     var dayNum = this.dayNum();
     var amPm = this.amPm();
-    var prtVal = this.prtVal();
+    var prtVal = this.prtVal(unselectedOption);
     
     var saveAndDelete = this.saveAndDelete(status);
 
     var section = CardService.newCardSection()
       .addWidget(courseName)
       .addWidget(dayNum)
-      .addWidge(amPm)
+      .addWidget(amPm)
       .addWidget(prtVal)
       .addWidget(saveAndDelete);
 
