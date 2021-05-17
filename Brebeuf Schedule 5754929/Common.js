@@ -53,7 +53,7 @@ function newButton(text, fnName, color) {
     .setOnClickAction(CardService.newAction()
       .setFunctionName(fnName));
   if (color != "N/A") button.setTextButtonStyle(CardService.TextButtonStyle.FILLED).setBackgroundColor(color);
-
+  
   return button;
 }
 

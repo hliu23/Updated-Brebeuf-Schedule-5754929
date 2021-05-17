@@ -270,6 +270,8 @@ function infoFromCourseName(courseName) {
 // DIRECT TO SCRIPT PROPERTY
 
 // ""
+// TERNARY
+// TEMPLATE LITERAL
 
 // Update course info in user properties according to user input
 function updateCourseInfo(e) {
@@ -278,21 +280,39 @@ function updateCourseInfo(e) {
   const NULL_STRING = "!nullnullnullnullnullnullnullnullnullnull!";
 
   userProperties.setProperty(USER_PREFIX+"courseStateChanged", true);
-  var name;
-  var period;
-  var prt;
-  var lunch;
-  // const PERIOD_ERR = "Please make sure the course has a period number.";
-  try {
-    if (e.commonEventObject.formInputs["name_input"] === undefined) console.log("undefined");
-    name = e.commonEventObject.formInputs["name_input"].stringInputs.value[0];
-    period = e.commonEventObject.formInputs["period_input"].stringInputs.value[0];
-    if (period == " " || isNaN(period) || period < 1 || period > 8) throw new TypeError();
+  var nameInput = e.commonEventObject.formInputs.name_input;
+  var periodInput = e.commonEventObject.formInputs.period_input;
+  var prtInput = e.commonEventObject.formInputs.prt_input;
+  var lunchInput = e.commonEventObject.formInputs.lunch_input;
 
-    prt = e.commonEventObject.formInputs["prt_input"].stringInputs.value[0];
-    lunch = e.commonEventObject.formInputs["lunch_input"].stringInputs.value[0];
-  
-    if (prt == "null" || lunch == "null") throw new TypeError();
+  // TESTING
+  // MESSAGE
+  function throwErr(errPosition = "each field") {
+    var errMessage = `Please make sure ${errPosition} is filled out correctly.`;
+    throw new TypeError(errMessage);
+  }
+  // NOTE: DID NOT CREATE VARIABLES OF ERRPOSITION BECAUSE ONLY USED ONCE AND IN ONE PLACE
+  try {
+    if (nameInput === undefined) throwErr("the course name");  
+    else var name = nameInput.stringInputs.value[0];
+
+    if (periodInput === undefined) throwErr("the period number");
+    else {
+      var period = periodInput.stringInputs.value[0];
+      if (period == " " || isNaN(period) || period < 1 || period > 8) throwErr("the period number");
+    }
+
+    if (prtInput === undefined) throwErr("the PRT");
+    else {
+      var prt = prtInput.stringInputs.value[0];
+      if (prt == "null") throwErr("the PRT");
+    }
+
+    if (lunchInput === undefined) throwErr("the lunch");
+    else {
+      var lunch = lunchInput.stringInputs.value[0];
+      if (lunch == "null") throwErr("the lunch");
+    }
   }
   // Catch TypeError
   catch (err) {
@@ -300,8 +320,7 @@ function updateCourseInfo(e) {
       console.log(err);
       throw err;
     }
-    else return newNotify("Please make sure all the fields are filled in correctly.");
-    // err.message
+    else return newNotify(err.message);
   }
   
   var status = e.parameters.status;
