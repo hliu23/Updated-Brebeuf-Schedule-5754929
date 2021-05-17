@@ -1,52 +1,16 @@
 // This program takes data from Google Classroom and user input to create personalized events in Google Calendar according to each user's class times (Help and Feedback options are available in the add-on)
 
-// 2021.4.27: START FROM filterPreserved() NEXT TIME
-// MERGED BETWEEN LATEST GITHUB AND LATEST WEB VERSION
-// POSSIBLE LOST OF CHANGES BETWEEN LAST GITHUB COMMIT (FILTER) AND LAST EDIT (COLORS)
 
 // COMMON & IRREGULAR & TEST
 // APP SCRIPT -> CLASP -> LOCAL -> GIT -> GITHUBS 
 
+// AVOID GLOBAL VARIABLES
 var userProperties = PropertiesService.getUserProperties();
 
 // SCRIPT PROPERTY?
-// Return keys of user properties that contain course info
-const REGULAR_PREFIX = "REG_";
-const IRREGULAR_PREFIX = "IRREG_";
-const USER_PREFIX = "USER_";
-
-function update() {
-  const CURRENT_VERSION = "2021-05-07-2";
-  var version = userProperties.getProperty(USER_PREFIX+"version");
-  if (version == null || version != CURRENT_VERSION) {
-    // UPDATES
-    userProperties.deleteAllProperties();
-  }
-  userProperties.setProperty(USER_PREFIX+"version", CURRENT_VERSION);
-}
-
-function underMaintenance(estimatedTimeUp = null) {
-  // NEW DATE?
-  if (estimatedTimeUp !== null) {
-    const ESTIMATED_TIME_UP = new Date(estimatedTimeUp);
-    var maintenance = "This add-on is undergoing maintenance and is currently unavailable. Please check again after " + ESTIMATED_TIME_UP + ". Thank you for your patience!";
-  } else {
-    var maintenance = "This add-on is undergoing maintenance and is currently unavailable. Please check again later. Thank you for your patience!";
-  }
-  
-  var text = CardService.newTextParagraph()
-    .setText(maintenance);
-  var section = CardService.newCardSection()
-    .addWidget(text);
-  var card = CardService.newCardBuilder()
-    .addSection(section);
-  return card.build();
-  // HEADER?
-
-}
-
 
 function regularPeriodPropKeys() {
+  const REGULAR_PREFIX = PropertiesService.getScriptProperties().getProperty("REGULAR_PREFIX");
   var userPropKeys = userProperties.getKeys();
 
   function filterRegular(key) {
@@ -76,28 +40,18 @@ function getRegularPeriodProp() {
 // WARNING FOR COLOR?
 // NOTE: REQUIRED THE ENTERING OF N/A FOR COLORS DUE TO HAVING OPTIONAL VALUES FOR KEYS AND VALUES - ALT IS TO LABEL PARAMETERS
 // DEFAULT?
-// Parameters: string, string (identifier), hexadecimal color (N/A if not needed), key, list of value
+// Parameters: string, string (identifier), hexadecimal color (N/A if not needed)
 /**
  * @param {String} text Text displayed on the button
  * @param {String} fnName Name of the function the button calls
  * @param {String} color Hexadecimal color of the button, enter "N/A" if leaving blank
- * @param {String} key Optional key for a parameter of the function
- * @param {} value Option value for a parameter of the function
  */
 // NOT WORKING?
-function newButton(text, fnName, color, key = undefined, value = undefined) {
-  var action = CardService.newAction()
-    .setFunctionName(fnName);
-  if (key !== undefined && value !== undefined) {
-    // WARNING
-    // if (key.length != value.length) console.log("Warning: the numbers of keys and values provided do not match in function " + fnName + "associated with button " + text);
-    action.setParameters({key: value.toString()});
-  }
-
+function newButton(text, fnName, color) {
   var button = CardService.newTextButton()
     .setText(text)
-    .setOnClickAction(action);
-
+    .setOnClickAction(CardService.newAction()
+      .setFunctionName(fnName));
   if (color != "N/A") button.setTextButtonStyle(CardService.TextButtonStyle.FILLED).setBackgroundColor(color);
 
   return button;
@@ -111,6 +65,3 @@ function newNotify(text) {
         .setText(text))
     .build();
 }
-
-
-// PRIVACY

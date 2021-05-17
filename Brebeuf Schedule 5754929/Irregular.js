@@ -1,29 +1,18 @@
 // ACTIVE BUILDING
 function irregularClass(e) {
   // MARK CHANGED; RETAIN INFO; DELETE OLD PROPERTY
-  // NOTE: SEPARATED INTO DIFFERENT STATEMENTS BECAUSE MULTIPLE ERRORS MAY EXIST
-
+  // DELETE OLD COMMENTS
+  // SET PERIOD CLASSES
   var name;
-  try {
-    name = e.commonEventObject.formInputs["name_input"].stringInputs.value[0];
-  } catch (err) {
-    if (err.name !== "TypeError") {
-      console.log(err);
-      throw err;
-    } else name = null;
-  }
-  var period;
-  try {
-    period = e.commonEventObject.formInputs["period_input"].stringInputs.value[0];
-  } catch (err) {
-    if (err.name !== "TypeError") {
-      console.log(err);
-      throw err;
-    } else period = null;
-  }
+  var nameInput = e.commonEventObject.formInputs.name_input;
+  if (nameInput === undefined) name = null;
+  else name = nameInput.stringInputs.value[0];
 
-  // CATCH; IF
-  // CONTINUE RUNNING
+  var period;  
+  var periodInput = e.commonEventObject.formInputs.period_input;
+  if (periodInput === undefined) period = null;
+  else period = periodInput.stringInputs.value[0];
+  
 
   // NOTE: IMPOSSIBLE TO HAVE "NULL" ENTERED BECAUSE OPTIONS INSTEAD OF TEXT INPUT
 
@@ -51,7 +40,7 @@ function irregularClass(e) {
       .setFunctionName("setPeriodClass")
       .setParameters({classInfo: JSON.stringify(classInfo), status: status}))
     .setTextButtonStyle(CardService.TextButtonStyle.FILLED)
-    .setBackgroundColor("#761113");
+    .setBackgroundColor(PropertiesService.getScriptProperties().getProperty("COLOR_MAIN"));
 
    var prtClass = CardService.newTextButton()
     .setText("Meeting during PRT")
@@ -59,7 +48,7 @@ function irregularClass(e) {
       .setFunctionName("setPrtClass")
       .setParameters({classInfo: JSON.stringify(classInfo), status: status}))
     .setTextButtonStyle(CardService.TextButtonStyle.FILLED)
-    .setBackgroundColor("#DEAC3F");
+    .setBackgroundColor(PropertiesService.getScriptProperties().getProperty("COLOR_ALT"));
   
   var selection = CardService.newButtonSet()
     .addButton(periodClass)
@@ -90,6 +79,7 @@ function setPeriodClass(e) {
   // HIDDEN SETTINGS?
   var classInfo = e.parameters.classInfo;
   classInfo = JSON.parse(classInfo);
+  console.log(classInfo);
 
   var subject = new Irregular_Period(classInfo[0], classInfo[1], classInfo[2], classInfo[3], null);
   return subject.build(e.parameters.status);

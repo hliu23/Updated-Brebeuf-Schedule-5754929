@@ -44,8 +44,7 @@ function test(){
 }
 
 function test1() {
-  var test = new Regular_Period("hdf", 2, "A", "B");
-  test.build("xtfcghgvjb");
+  
 }
 
 // DECLARATION

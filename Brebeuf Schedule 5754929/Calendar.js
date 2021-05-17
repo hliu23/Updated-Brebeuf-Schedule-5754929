@@ -19,7 +19,7 @@ function checkEvents() {
     var schedule = [];
 
     for (let x in courseProperties) {
-      course = JSON.parse(courseProperties[x]);
+      course = courseProperties[x];
       courseNum = parseInt(course.period, 10);
       courseName = course.name;
       periodNum[x] = courseNum;
@@ -49,6 +49,7 @@ function checkEvents() {
 
 // Create calendar in user's calendar if it has not been created or if the user has made any changes to course info since last run
 function createCalendar(schedule) {
+  const USER_PREFIX = PropertiesService.getScriptProperties.getProperty("USER_PREFIX");
   try {
     var courseStateChanged = userProperties.getProperty(USER_PREFIX+"courseStateChanged");
     var calProperty = userProperties.getProperty(USER_PREFIX+"calendarId");
@@ -65,7 +66,7 @@ function createCalendar(schedule) {
         summary: "A calendar with scheduled personalized reminders at Brebeuf class time.",
         timeZone: "America/New_York"
       });
-      calendar.setColor("#761113");
+      calendar.setColor(PropertiesService.getScriptProperties().getProperty("COLOR_MAIN"));
 
       calId = calendar.getId();
 
@@ -95,7 +96,7 @@ function eventsCard(calId, schedule) {
       .setFunctionName("createEvents")
       .setParameters({calId: calId, schedule: JSON.stringify(schedule)}))
     .setTextButtonStyle(CardService.TextButtonStyle.FILLED)
-    .setBackgroundColor("#761113");
+    .setBackgroundColor(PropertiesService.getScriptProperties().getProperty("COLOR_MAIN"));
 
   var section = CardService.newCardSection()
     .addWidget(explanation)
@@ -110,6 +111,7 @@ function eventsCard(calId, schedule) {
 
 // Create event requests and push into the global variable "requests"
 function createEvents(e) {
+  const USER_PREFIX = PropertiesService.getScriptProperties().getProperty("USER_PREFIX");
   console.time("createEvents");
   var calId = e.parameters.calId;
   var schedule = JSON.parse(e.parameters.schedule);
@@ -175,14 +177,14 @@ function batchRequests() {
 function createEventsOfDay(calId, schedule, currentDate) {
   var brDay = brebeufDay(currentDate);
 
-  if (brDay != null) {
+  if (brDay !== null) {
 
     var cOrder = classOrder(brDay);
     for (let n in cOrder) {
   
       let currentPeriodNum = cOrder[n];
       let course = schedule[currentPeriodNum];
-      if (course != null) {
+      if (course !== null) {
         let classNumInDay = Number(n)+1;
 
         let callStr;
@@ -346,6 +348,7 @@ function brebeufDay(enterDate) {
   for (let x in SPECIAL_DAY) {
     specialDays[x] = new Date(SPECIAL_DAY[x]);
   }
+  // TWO ARRAYS?
   for (let y in EXTENDED_BREAK) {
     let startDate = new Date(EXTENDED_BREAK[y][0]);
     let endDate = new Date(EXTENDED_BREAK[y][1]);
@@ -373,7 +376,7 @@ function brebeufDay(enterDate) {
         if (enteredDate.getTime() >= e[0].getTime() && enteredDate.getTime() <= e[1].getTime()) brebeufDay = null;
     }
     
-    if (brebeufDay != null) {
+    if (brebeufDay !== null) {
       var dayCount = 0;
 
       var testEntered = new Date(enteredDate);

@@ -1,4 +1,4 @@
-// GOOGLE AMDIN
+// GOOGLE ADMIN
 // COURSENUM
 // TWO HOUR DELAY
 // SPREADSHEET
@@ -11,12 +11,15 @@
 // ON THE CREATE EVENTS PAGE BUT DELETED CALENDAR
 // NULL STRING
 // NAMING
+// PICK DATE
+// MODIFY SCHEDULE
 
 // SCRIPT PROPERTIES?
 
 // FILL IN: CONST?
 // Save all possible class times in script properties; information comes from the schedule Brebeuf released
 function toHomePage() {
+  const USER_PREFIX = PropertiesService.getScriptProperties().getProperty("USER_PREFIX");
   const DOWN = false;
   if (DOWN == true) {
     return underMaintenance(); 
@@ -29,10 +32,11 @@ function toHomePage() {
 
 // Build the homepage of the add-on, which displays all classes stored in user properties and options to retrieve class info from Classroom, create and delete classes, and create events
 function homePage() {
+  const COLOR_MAIN = PropertiesService.getScriptProperties().getProperty("COLOR_MAIN");
   var startSection = CardService.newCardSection();
   
-  var initializeButton = newButton("Retrieve Courses from Classroom", "initialize", "#761113");
-  var createButton = newButton("Add a Course", "createCourse", "#761113");
+  var initializeButton = newButton("Retrieve Courses from Classroom", "initialize", COLOR_MAIN);
+  var createButton = newButton("Add a Course", "createCourse", COLOR_MAIN);
 
   startSection.addWidget(initializeButton)
     .addWidget(createButton);
@@ -52,7 +56,7 @@ function homePage() {
   }
   
   var calendarSection = CardService.newCardSection();
-  var calendarButton = newButton("Create Events in Calendar", "checkEvents", "#DEAC3F");
+  var calendarButton = newButton("Create Events in Calendar", "checkEvents", PropertiesService.getScriptProperties().getProperty("COLOR_ALT"));
   calendarSection.addWidget(calendarButton);
 
   var card = CardService.newCardBuilder()
@@ -67,6 +71,8 @@ function homePage() {
 
 // Retrieve classes from Classroom and save them in user properties
 function initialize() {
+  const USER_PREFIX = PropertiesService.getScriptProperties().getProperty("USER_PREFIX");
+  const REGULAR_PREFIX = PropertiesService.getScriptProperties().getProperty("REGULAR_PREFIX");
   userProperties.setProperty(USER_PREFIX+"courseStateChanged", true);
 
   const PARAMS = {method: "get", headers: {Authorization: "Bearer " + ScriptApp.getOAuthToken()}};
@@ -181,6 +187,7 @@ function createToCardButtonSet(name) {
 
 // NAME OR PROPERTY?
 function gotoCourse(e) {
+  const REGULAR_PREFIX = PropertiesService.getScriptProperties().getProperty("REGULAR_PREFIX");
   var name = e.parameters.name;  
   var subject = JSON.parse(userProperties.getProperty(REGULAR_PREFIX+name));
   subject = Object.assign(new Regular_Period(), subject);
@@ -234,7 +241,7 @@ function infoFromCourseName(courseName) {
   var len;
   var periodNum = null;
   periodLoop:
-  for (var i = 0; i < periodSearchWord.length; i++) {
+  for (let i = 0; i < periodSearchWord.length; i++) {
     periodPosition = convertedCourseName.search(periodSearchWord[i]);
     if (periodPosition !== -1) {
       len = periodSearchWord[i].length;
@@ -260,11 +267,14 @@ function infoFromCourseName(courseName) {
 
 // SAVE PROCESS
 // DETECT STATE CHANGED?
+// DIRECT TO SCRIPT PROPERTY
 
 // ""
 
 // Update course info in user properties according to user input
 function updateCourseInfo(e) {
+  const USER_PREFIX = PropertiesService.getScriptProperties().getProperty("USER_PREFIX");
+  const REGULAR_PREFIX = PropertiesService.getScriptProperties().getProperty("REGULAR_PREFIX");
   const NULL_STRING = "!nullnullnullnullnullnullnullnullnullnull!";
 
   userProperties.setProperty(USER_PREFIX+"courseStateChanged", true);
@@ -272,12 +282,12 @@ function updateCourseInfo(e) {
   var period;
   var prt;
   var lunch;
+  // const PERIOD_ERR = "Please make sure the course has a period number.";
   try {
+    if (e.commonEventObject.formInputs["name_input"] === undefined) console.log("undefined");
     name = e.commonEventObject.formInputs["name_input"].stringInputs.value[0];
     period = e.commonEventObject.formInputs["period_input"].stringInputs.value[0];
-    if (period == " ") throw new TypeError();
-    else if (isNaN(period)) throw new TypeError();
-    else if (period < 1 || period > 8) throw new TypeError();
+    if (period == " " || isNaN(period) || period < 1 || period > 8) throw new TypeError();
 
     prt = e.commonEventObject.formInputs["prt_input"].stringInputs.value[0];
     lunch = e.commonEventObject.formInputs["lunch_input"].stringInputs.value[0];
@@ -291,6 +301,7 @@ function updateCourseInfo(e) {
       throw err;
     }
     else return newNotify("Please make sure all the fields are filled in correctly.");
+    // err.message
   }
   
   var status = e.parameters.status;
@@ -314,6 +325,8 @@ function updateCourseInfo(e) {
 
 // Delete course info from user properties from course page
 function deleteCourse(e) {
+  const USER_PREFIX = PropertiesService.getScriptProperties().getProperty("USER_PREFIX");
+  const REGULAR_PREFIX = PropertiesService.getScriptProperties().getProperty("REGULAR_PREFIX");
   const NULL_STRING = "!nullnullnullnullnullnullnullnullnullnull!";
 
   userProperties.setProperty(USER_PREFIX+"courseStateChanged", true);
@@ -331,6 +344,8 @@ function deleteCourse(e) {
 
 // Delete course from user properties from home page
 function deleteCourseFromMenu(e) {
+  const USER_PREFIX = PropertiesService.getScriptProperties().getProperty("USER_PREFIX");
+  const REGULAR_PREFIX = PropertiesService.getScriptProperties().getProperty("REGULAR_PREFIX");
   userProperties.setProperty(USER_PREFIX+"courseStateChanged", true);
   var subject = e.parameters.name;
   userProperties.deleteProperty(REGULAR_PREFIX+subject);

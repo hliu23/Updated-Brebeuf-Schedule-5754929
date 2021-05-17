@@ -30,7 +30,7 @@ class Course {
     var courseName = CardService.newTextInput()
       .setFieldName("name_input")
       .setTitle("Course Name")
-      .setValue(this.name);
+    if (this.name !== null) courseName.setValue(this.name);
     return courseName;
   }
 
@@ -66,7 +66,7 @@ class Course {
     var saveButton = CardService.newTextButton()
       .setText("Save Changes")
       .setTextButtonStyle(CardService.TextButtonStyle.FILLED)
-      .setBackgroundColor("#761113")
+      .setBackgroundColor(PropertiesService.getScriptProperties().getProperty("COLOR_MAIN"))
       .setOnClickAction(CardService.newAction()
         .setFunctionName("updateCourseInfo")
         .setParameters({status: status}));
@@ -74,7 +74,7 @@ class Course {
     var deleteButton = CardService.newTextButton()
       .setText("Delete Course")
       .setTextButtonStyle(CardService.TextButtonStyle.FILLED)
-      .setBackgroundColor("#DEAC3F")
+      .setBackgroundColor(PropertiesService.getScriptProperties().getProperty("COLOR_ALT"))
       .setOnClickAction(CardService.newAction()
         .setFunctionName("deleteCourse")
         .setParameters({status: status}));
@@ -85,8 +85,6 @@ class Course {
 
     return cardButtonSet;    
   }
-
-  
   // NO BUILD()?
 }
 
@@ -125,7 +123,7 @@ class Regular_Period extends Course {
     var periodNum = CardService.newTextInput()
       .setFieldName("period_input")
       .setTitle("Period Number");
-    if (this.period != null) periodNum.setValue(this.period.toString());
+    if (this.period !== null) periodNum.setValue(this.period.toString());
     return periodNum;
   }
 
@@ -226,7 +224,7 @@ class Irregular_Period extends Regular_Period {
     var dayNum = CardService.newTextInput()
       .setFieldName("day_input")
       .setTitle("Day");
-    if (this.day != null) dayNum.setValue(this.day.toString());
+    if (this.day !== null) dayNum.setValue(this.day.toString());
     return dayNum;
   }
 
@@ -287,7 +285,7 @@ class Irregular_PRT extends Course {
     var dayNum = CardService.newTextInput()
       .setFieldName("day_input")
       .setTitle("Day");
-    if (this.day != null) dayNum.setValue(this.day.toString());
+    if (this.day !== null) dayNum.setValue(this.day.toString());
     return dayNum;
   }
 
