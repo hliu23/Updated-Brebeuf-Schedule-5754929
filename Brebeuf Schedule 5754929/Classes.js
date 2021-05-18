@@ -62,14 +62,14 @@ class Course {
     // TEST FOR ERROR?
   }
 
-  saveAndDelete(status){
+  saveAndDelete(status, type) {
     var saveButton = CardService.newTextButton()
       .setText("Save Changes")
       .setTextButtonStyle(CardService.TextButtonStyle.FILLED)
       .setBackgroundColor(PropertiesService.getScriptProperties().getProperty("COLOR_MAIN"))
       .setOnClickAction(CardService.newAction()
         .setFunctionName("updateCourseInfo")
-        .setParameters({status: status}));
+        .setParameters({status: status, type: type}));
 
     var deleteButton = CardService.newTextButton()
       .setText("Delete Course")
@@ -77,7 +77,7 @@ class Course {
       .setBackgroundColor(PropertiesService.getScriptProperties().getProperty("COLOR_ALT"))
       .setOnClickAction(CardService.newAction()
         .setFunctionName("deleteCourse")
-        .setParameters({status: status}));
+        .setParameters({status: status, type: type}));
 
     var cardButtonSet = CardService.newButtonSet()
       .addButton(saveButton)
@@ -179,7 +179,8 @@ class Regular_Period extends Course {
     var irregularButton = this.irregularButton(status);
     var prtVal = this.prtVal(unselectedOption);
     var lunchVal = this.lunchVal(unselectedOption);
-    var saveAndDelete = this.saveAndDelete(status);
+    // IDENTIFIER
+    var saveAndDelete = this.saveAndDelete(status, "Regular_Period");
 
     var section = CardService.newCardSection()
       .addWidget(courseName)
@@ -234,7 +235,7 @@ class Irregular_Period extends Regular_Period {
     var periodNum = this.periodNum();
     var prtVal = this.prtVal(unselectedOption);
     var lunchVal = this.lunchVal(unselectedOption);
-    var saveAndDelete = this.saveAndDelete(status);
+    var saveAndDelete = this.saveAndDelete(status, "Irregular_Period");
 
     var section = CardService.newCardSection()
       .addWidget(courseName)
@@ -306,7 +307,7 @@ class Irregular_PRT extends Course {
     var amPm = this.amPm();
     var prtVal = this.prtVal(unselectedOption);
     
-    var saveAndDelete = this.saveAndDelete(status);
+    var saveAndDelete = this.saveAndDelete(status, "Irregular_PRT");
 
     var section = CardService.newCardSection()
       .addWidget(courseName)

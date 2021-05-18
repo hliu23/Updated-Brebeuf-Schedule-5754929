@@ -2,7 +2,6 @@
 function irregularClass(e) {
   // MARK CHANGED; RETAIN INFO; DELETE OLD PROPERTY
   // DELETE OLD COMMENTS
-  // SET PERIOD CLASSES
   var name;
   var nameInput = e.commonEventObject.formInputs.name_input;
   if (nameInput === undefined) name = null;
@@ -20,7 +19,6 @@ function irregularClass(e) {
   if (prt == "null") prt = null;
   var lunch = e.commonEventObject.formInputs["lunch_input"].stringInputs.value[0];
   if (lunch == "null") lunch = null;
-  // STRING INSTEAD OF NULL
 
   var classInfo = [name, period, prt, lunch];
   var status = e.parameters.status;
@@ -73,7 +71,6 @@ function irregularClass(e) {
 // FROM STARTING DATE?
 // FROM STARTING TIME?
 
-// JSON
 
 function setPeriodClass(e) {
   // HIDDEN SETTINGS?

@@ -328,7 +328,6 @@ function brebeufDay(enterDate) {
   var enteredDate = new Date(enterDate);
   enteredDate.setHours(0,0,0,0);
 
-  // SCRIPT PROPERTIES?
   // CHECK POINTS? 
   // AUTOMATIC CHECK AFTER EDIT?
   const SPECIAL_DAY = [];
@@ -337,8 +336,6 @@ function brebeufDay(enterDate) {
   // OFF TIMES
   // INCLUDE, INCLUDE
   // CHECK DATE
-  // SKIPPING FIRST DATE
-  // STARTING FROM DAY 8 AFTER SUMMER BREAK
   // DELETE OLD CALENDAR AND CREATE NEW UP-TO-DATE
   // EXPORT SETTINGS
   // DELETED PROPERTIES: INFO REENTER

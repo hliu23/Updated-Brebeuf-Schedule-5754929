@@ -153,7 +153,8 @@ function sortCourses() {
   return courseList;
 }
 
-
+// MATCH COLOR OF EVENTS TO CLASSROOM
+// SELECT?
 // Create buttons that can be checked on to view detailed info about classes
 function createToCardButtonSet(name) {
   var gotoCourse = CardService.newAction()
@@ -273,45 +274,81 @@ function infoFromCourseName(courseName) {
 // TERNARY
 // TEMPLATE LITERAL
 
+// CAPS: ENTERED?
+// DIFFERENT FUNCTION? REPEATED
+// SCRIPT PROPERTY
+
 // Update course info in user properties according to user input
 function updateCourseInfo(e) {
   const USER_PREFIX = PropertiesService.getScriptProperties().getProperty("USER_PREFIX");
   const REGULAR_PREFIX = PropertiesService.getScriptProperties().getProperty("REGULAR_PREFIX");
+  const IRR_PER_PREFIX = PropertiesService.getScriptProperties().getProperty("IRREGULAR_PERIOD_PREFIX");
+  const IRR_PRT_PREFIX = PropertiesService.getScriptProperties().getProperty("IRREGULAR_PRT_PREFIX");
   const NULL_STRING = "!nullnullnullnullnullnullnullnullnullnull!";
+  const REG = "Regular_Period";
+  const IRR_PER = "Irregular_Period";
+  const IRR_PRT = "Irregular_PRT";
 
   userProperties.setProperty(USER_PREFIX+"courseStateChanged", true);
-  var nameInput = e.commonEventObject.formInputs.name_input;
-  var periodInput = e.commonEventObject.formInputs.period_input;
-  var prtInput = e.commonEventObject.formInputs.prt_input;
-  var lunchInput = e.commonEventObject.formInputs.lunch_input;
+  var type = e.parameters.type;
 
-  // TESTING
-  // MESSAGE
   function throwErr(errPosition = "each field") {
     var errMessage = `Please make sure ${errPosition} is filled out correctly.`;
     throw new TypeError(errMessage);
   }
-  // NOTE: DID NOT CREATE VARIABLES OF ERRPOSITION BECAUSE ONLY USED ONCE AND IN ONE PLACE
+
+  // TESTING
+  // MESSAGE
+  
+  // NOTE: DID NOT CREATE VARIABLES FOR ERRPOSITION BECAUSE ONLY USED ONCE AND IN ONE PLACE
   try {
+    var nameInput = e.commonEventObject.formInputs.name_input;
     if (nameInput === undefined) throwErr("the course name");  
     else var name = nameInput.stringInputs.value[0];
 
-    if (periodInput === undefined) throwErr("the period number");
-    else {
-      var period = periodInput.stringInputs.value[0];
-      if (period == " " || isNaN(period) || period < 1 || period > 8) throwErr("the period number");
-    }
-
+    var prtInput = e.commonEventObject.formInputs.prt_input;
     if (prtInput === undefined) throwErr("the PRT");
     else {
       var prt = prtInput.stringInputs.value[0];
       if (prt == "null") throwErr("the PRT");
     }
 
-    if (lunchInput === undefined) throwErr("the lunch");
-    else {
-      var lunch = lunchInput.stringInputs.value[0];
-      if (lunch == "null") throwErr("the lunch");
+    if (type == REG || type == IRR_PER) {
+      var periodInput = e.commonEventObject.formInputs.period_input;
+      if (periodInput === undefined) throwErr("the period number");
+      else {
+        var period = periodInput.stringInputs.value[0];
+        if (period == " " || isNaN(period) || period < 1 || period > 8) throwErr("the period number");
+      }
+
+      var lunchInput = e.commonEventObject.formInputs.lunch_input;
+      if (lunchInput === undefined) throwErr("the lunch");
+      else {
+        var lunch = lunchInput.stringInputs.value[0];
+        if (lunch == "null") throwErr("the lunch");
+      }
+    }
+
+    if (type == IRR_PER || type == IRR_PRT) {
+      var dayInput = e.commonEventObject.formInputs.day_input;
+      if (dayInput === undefined) throwErr("the day"); 
+      // MESSAGE?
+      else {
+        var day = dayInput.stringInputs.value[0];
+        if (day == " " || isNaN(day) || day < 1 || day > 8) throwErr("the day");
+      }
+    }
+
+    if (type == IRR_PRT) {
+      var amPmInput = e.commonEventObject.formInputs.ampm_input;
+      if (amPmInput === undefined) throwErr("the time");
+      else {
+        var amPm = amPmInput.stringInputs.value[0];
+        if (amPm == "null") throwErr("the time");
+        // AFTERNOON PRT: IF NEEDED
+        // CAN BE NULL?
+      }
+      // THIS
     }
   }
   // Catch TypeError
@@ -326,13 +363,26 @@ function updateCourseInfo(e) {
   var status = e.parameters.status;
   
   period = parseInt(period, 10);
-  if (status !== NULL_STRING) userProperties.deleteProperty(REGULAR_PREFIX+status);
-  // SUBJECT?
-  
-  var course = new Regular_Period(name, period, prt, lunch);
-  userProperties.setProperty(REGULAR_PREFIX+course.name, JSON.stringify(course));
+  day = parseInt(day, 10);
+  // HERE
+  if (status !== NULL_STRING) {
+    if (type == REG) userProperties.deleteProperty(REGULAR_PREFIX+status);
+    if (type == IRR_PER) userProperties.deleteProperty(IRR_PER_PREFIX+status);
+    if (type == IRR_PRT) userProperties.deleteProperty(IRR_PRT_PREFIX+status);
+  }
 
-  // PM NO SECOND PRT
+  if (type == REG) {
+    var course = new Regular_Period(name, period, prt, lunch);
+    userProperties.setProperty(REGULAR_PREFIX+course.name, JSON.stringify(course));
+  }
+  if (type == IRR_PER) {
+    var course = new Irregular_Period(name, period, prt, lunch, day);
+    userProperties.setProperty(IRR_PER_PREFIX+course.name, JSON.stringify(course));
+  }
+  if (type == IRR_PRT) {
+    var course = new Irregular_PRT(name, prt, day, amPm);
+    userProperties.setProperty(IRR_PRT_PREFIX+course.name, JSON.stringify(course));
+  }
 
   var toHomePage = CardService.newNavigation().popToNamedCard("homePage").updateCard(homePage());
   return CardService.newActionResponseBuilder()
@@ -341,6 +391,8 @@ function updateCourseInfo(e) {
       .setText("Changes successfully saved."))
     .build();
 }
+
+// START HERE TOMORROW 2021.5.18
 
 // Delete course info from user properties from course page
 function deleteCourse(e) {

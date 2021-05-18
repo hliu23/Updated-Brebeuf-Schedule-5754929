@@ -44,7 +44,8 @@ function test(){
 }
 
 function test1() {
-  
+  const IRR_PRT_PREFIX = PropertiesService.getScriptProperties().getProperty("IRREGULAR_PRT_PREFIX");
+  Logger.log(IRR_PRT_PREFIX);
 }
 
 // DECLARATION

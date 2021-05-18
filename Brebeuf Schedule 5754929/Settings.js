@@ -21,7 +21,8 @@ function setScriptProperties() {
 
     "USER_PREFIX" : "USER_",
     "REGULAR_PREFIX" : "REG_",
-    "IRREGULAR_PREFIX" : "IRREG_",
+    "IRREGULAR_PERIOD_PREFIX" : "IRR_PER_",
+    "IRREGULAR_PRT_PREFIX" : "IRR_PRT_",
 
     "COLOR_MAIN" : "#761113",
     "COLOR_ALT" : "#DEAC3F"
@@ -41,6 +42,7 @@ function update() {
   var version = userProperties.getProperty(USER_PREFIX+"version");
   if (version == null || version != CURRENT_VERSION) {
     // Updates
+    // KEEP PROPERTIES
     userProperties.deleteAllProperties();
   }
   userProperties.setProperty(USER_PREFIX+"version", CURRENT_VERSION);
