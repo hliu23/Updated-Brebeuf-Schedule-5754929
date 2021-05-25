@@ -62,22 +62,22 @@ class Course {
     // TEST FOR ERROR?
   }
 
-  saveAndDelete(status, type) {
+  saveAndDelete(status, identifier) {
     var saveButton = CardService.newTextButton()
       .setText("Save Changes")
       .setTextButtonStyle(CardService.TextButtonStyle.FILLED)
-      .setBackgroundColor(PropertiesService.getScriptProperties().getProperty("COLOR_MAIN"))
+      .setBackgroundColor(brebeufSchedule5754929.COLOR_MAIN)
       .setOnClickAction(CardService.newAction()
         .setFunctionName("updateCourseInfo")
-        .setParameters({status: status, type: type}));
+        .setParameters({status: status, identifier: identifier}));
 
     var deleteButton = CardService.newTextButton()
       .setText("Delete Course")
       .setTextButtonStyle(CardService.TextButtonStyle.FILLED)
-      .setBackgroundColor(PropertiesService.getScriptProperties().getProperty("COLOR_ALT"))
+      .setBackgroundColor(brebeufSchedule5754929.COLOR_ALT)
       .setOnClickAction(CardService.newAction()
         .setFunctionName("deleteCourse")
-        .setParameters({status: status, type: type}));
+        .setParameters({status: status, identifier: identifier}));
 
     var cardButtonSet = CardService.newButtonSet()
       .addButton(saveButton)
@@ -180,7 +180,8 @@ class Regular_Period extends Course {
     var prtVal = this.prtVal(unselectedOption);
     var lunchVal = this.lunchVal(unselectedOption);
     // IDENTIFIER
-    var saveAndDelete = this.saveAndDelete(status, "Regular_Period");
+
+    var saveAndDelete = this.saveAndDelete(status, brebeufSchedule5754929.REGULAR_PREFIX);
 
     var section = CardService.newCardSection()
       .addWidget(courseName)
@@ -235,7 +236,8 @@ class Irregular_Period extends Regular_Period {
     var periodNum = this.periodNum();
     var prtVal = this.prtVal(unselectedOption);
     var lunchVal = this.lunchVal(unselectedOption);
-    var saveAndDelete = this.saveAndDelete(status, "Irregular_Period");
+
+    var saveAndDelete = this.saveAndDelete(status, brebeufSchedule5754929.IRREGULAR_PERIOD_PREFIX);
 
     var section = CardService.newCardSection()
       .addWidget(courseName)
@@ -307,7 +309,7 @@ class Irregular_PRT extends Course {
     var amPm = this.amPm();
     var prtVal = this.prtVal(unselectedOption);
     
-    var saveAndDelete = this.saveAndDelete(status, "Irregular_PRT");
+    var saveAndDelete = this.saveAndDelete(status, brebeufSchedule5754929.IRREGULAR_PRT_PREFIX);
 
     var section = CardService.newCardSection()
       .addWidget(courseName)

@@ -1,4 +1,5 @@
 // ACTIVE BUILDING
+// CONVERT; DELETE OLD (GO BACK?); ENTER NEW INFO; SAVE NEW INFO; RENDER COURSELIST; DIRECT STRAIGHT TO PAGE; REQUEST
 function irregularClass(e) {
   // MARK CHANGED; RETAIN INFO; DELETE OLD PROPERTY
   // DELETE OLD COMMENTS
@@ -15,9 +16,9 @@ function irregularClass(e) {
 
   // NOTE: IMPOSSIBLE TO HAVE "NULL" ENTERED BECAUSE OPTIONS INSTEAD OF TEXT INPUT
 
-  var prt = e.commonEventObject.formInputs["prt_input"].stringInputs.value[0];
+  var prt = e.commonEventObject.formInputs.prt_input.stringInputs.value[0];
   if (prt == "null") prt = null;
-  var lunch = e.commonEventObject.formInputs["lunch_input"].stringInputs.value[0];
+  var lunch = e.commonEventObject.formInputs.lunch_input.stringInputs.value[0];
   if (lunch == "null") lunch = null;
 
   var classInfo = [name, period, prt, lunch];
@@ -38,7 +39,7 @@ function irregularClass(e) {
       .setFunctionName("setPeriodClass")
       .setParameters({classInfo: JSON.stringify(classInfo), status: status}))
     .setTextButtonStyle(CardService.TextButtonStyle.FILLED)
-    .setBackgroundColor(PropertiesService.getScriptProperties().getProperty("COLOR_MAIN"));
+    .setBackgroundColor(brebeufSchedule5754929.COLOR_MAIN);
 
    var prtClass = CardService.newTextButton()
     .setText("Meeting during PRT")
@@ -46,7 +47,7 @@ function irregularClass(e) {
       .setFunctionName("setPrtClass")
       .setParameters({classInfo: JSON.stringify(classInfo), status: status}))
     .setTextButtonStyle(CardService.TextButtonStyle.FILLED)
-    .setBackgroundColor(PropertiesService.getScriptProperties().getProperty("COLOR_ALT"));
+    .setBackgroundColor(brebeufSchedule5754929.COLOR_ALT);
   
   var selection = CardService.newButtonSet()
     .addButton(periodClass)
@@ -93,4 +94,5 @@ function setPrtClass(e) {
 
   var subject = new Irregular_PRT(classInfo[0], classInfo[2], null, null);
   return subject.build(e.parameters.status, unselectedOption = null);
+  // EXPLAIN SECOND PRT
 }

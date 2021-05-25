@@ -44,9 +44,29 @@ function test(){
 }
 
 function test1() {
-  const IRR_PRT_PREFIX = PropertiesService.getScriptProperties().getProperty("IRREGULAR_PRT_PREFIX");
-  Logger.log(IRR_PRT_PREFIX);
+  
+  console.time("property");
+  
+    var calProperty = userProperties.getProperty("USER_calendarId");
+    Logger.log(calProperty);
+  
+  console.timeEnd("property");
+
+  console.time("namespac");
+  
+  Logger.log(brebeufSchedule5754929.USER_PREFIX);
+  
+  console.timeEnd("namespac");
+  Logger.log(brebeufSchedule5754929.IRREGULAR_PERIOD_PREFIX);
+  test2();
+  Logger.log(brebeufSchedule5754929.USER_PREFIX);
 }
+// VAR REEVALUATED EVERY FUNCTION RUN?
+function test2() {
+  ScriptProperties.setProperty("USER_PREFIX", "b");
+}
+// VAR RECALCUATED WITH REFRESH?
+
 
 // DECLARATION
 // STORE OBJECT? LIST OF INPUT AND OUTPUT FOR A PARTICULAR FUNCTION

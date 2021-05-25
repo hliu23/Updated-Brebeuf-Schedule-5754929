@@ -9,30 +9,34 @@ var userProperties = PropertiesService.getUserProperties();
 
 // SCRIPT PROPERTY?
 
-function regularPeriodPropKeys() {
-  const REGULAR_PREFIX = PropertiesService.getScriptProperties().getProperty("REGULAR_PREFIX");
+function propKeys(identifier) {
   var userPropKeys = userProperties.getKeys();
 
-  function filterRegular(key) {
-    var keep = key.startsWith(REGULAR_PREFIX);
+  function filterByIdentifier(key) {
+    var keep;
+    if (identifier === brebeufSchedule5754929.REGULAR_PREFIX) keep = key.startsWith(brebeufSchedule5754929.REGULAR_PREFIX);
+    else if (identifier === brebeufSchedule5754929.IRREGULAR_PERIOD_PREFIX) keep = key.startsWith(brebeufSchedule5754929.IRREGULAR_PERIOD_PREFIX);
+    else if (identifier === brebeufSchedule5754929.IRREGULAR_PRT_PREFIX) keep = key.startsWith(brebeufSchedule5754929.IRREGULAR_PRT_PREFIX);
     return keep;
   }
-  var regularPeriodPropKeys = userPropKeys.filter(filterRegular);
+  var propKeys = userPropKeys.filter(filterByIdentifier);
 
-  return regularPeriodPropKeys;
+  return propKeys;
 }
+
+// RENDERING?
 
 
 // Return parts of user properties that contain course info
-function getRegularPeriodProp() {
-  var regPeriodPropKeys = regularPeriodPropKeys();
-  var regularPeriodProp = [];
-  for (let x of regPeriodPropKeys) {
+function getProps(identifier) {
+  var propKeysList = propKeys(identifier);
+  var props = [];
+  for (let x of propKeysList) {
     var prop = userProperties.getProperty(x);
     prop = JSON.parse(prop);
-    regularPeriodProp.push(prop);
+    props.push(prop);
   }
-  return regularPeriodProp;
+  return props;
 }
 
 // UPLOAD IMAGE TO SITE

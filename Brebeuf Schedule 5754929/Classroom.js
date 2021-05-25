@@ -14,35 +14,46 @@
 // PICK DATE
 // MODIFY SCHEDULE
 
-// SCRIPT PROPERTIES?
+// CHECK FOR COLLISION
+// SCRIPT PROPERTY?
+// UPDATES?
+var brebeufSchedule5754929 = {
+  USER_PREFIX : PropertiesService.getScriptProperties().getProperty("USER_PREFIX"),
+  REGULAR_PREFIX : PropertiesService.getScriptProperties().getProperty("REGULAR_PREFIX"),
+  IRREGULAR_PERIOD_PREFIX : PropertiesService.getScriptProperties().getProperty("IRREGULAR_PERIOD_PREFIX"),
+  IRREGULAR_PRT_PREFIX : PropertiesService.getScriptProperties().getProperty("IRREGULAR_PRT_PREFIX"),
+
+  COLOR_MAIN : PropertiesService.getScriptProperties().getProperty("COLOR_MAIN"),
+  COLOR_ALT : PropertiesService.getScriptProperties().getProperty("COLOR_ALT"),
+
+  NULL_STRING : PropertiesService.getScriptProperties().getProperty("NULL_STRING")
+}
 
 // FILL IN: CONST?
 // Save all possible class times in script properties; information comes from the schedule Brebeuf released
 function toHomePage() {
-  const USER_PREFIX = PropertiesService.getScriptProperties().getProperty("USER_PREFIX");
   const DOWN = false;
   if (DOWN == true) {
     return underMaintenance(); 
   } else {
     update();
-    userProperties.setProperty(USER_PREFIX+"courseStateChanged", false);
+    userProperties.setProperty(brebeufSchedule5754929.USER_PREFIX+"courseStateChanged", false);
     return homePage();
   }
 }
 
 // Build the homepage of the add-on, which displays all classes stored in user properties and options to retrieve class info from Classroom, create and delete classes, and create events
 function homePage() {
-  const COLOR_MAIN = PropertiesService.getScriptProperties().getProperty("COLOR_MAIN");
   var startSection = CardService.newCardSection();
   
-  var initializeButton = newButton("Retrieve Courses from Classroom", "initialize", COLOR_MAIN);
-  var createButton = newButton("Add a Course", "createCourse", COLOR_MAIN);
+  var initializeButton = newButton("Retrieve Courses from Classroom", "initialize", brebeufSchedule5754929.COLOR_MAIN);
+  var createButton = newButton("Add a Course", "createCourse", brebeufSchedule5754929.COLOR_MAIN);
 
   startSection.addWidget(initializeButton)
     .addWidget(createButton);
 
   var courseSection = CardService.newCardSection();
-  var courseList = sortCourses();
+  var courseList = sortRegularCourses();
   if (courseList.length == 0) {
     const PROMPT = "No course information stored. \n\nRetrieve courses from Google Classroom by clicking on the first button above.";
     var textExplanation = CardService.newTextParagraph()
@@ -56,7 +67,7 @@ function homePage() {
   }
   
   var calendarSection = CardService.newCardSection();
-  var calendarButton = newButton("Create Events in Calendar", "checkEvents", PropertiesService.getScriptProperties().getProperty("COLOR_ALT"));
+  var calendarButton = newButton("Create Events in Calendar", "checkEvents", brebeufSchedule5754929.COLOR_ALT);
   calendarSection.addWidget(calendarButton);
 
   var card = CardService.newCardBuilder()
@@ -71,9 +82,7 @@ function homePage() {
 
 // Retrieve classes from Classroom and save them in user properties
 function initialize() {
-  const USER_PREFIX = PropertiesService.getScriptProperties().getProperty("USER_PREFIX");
-  const REGULAR_PREFIX = PropertiesService.getScriptProperties().getProperty("REGULAR_PREFIX");
-  userProperties.setProperty(USER_PREFIX+"courseStateChanged", true);
+  userProperties.setProperty(brebeufSchedule5754929.USER_PREFIX+"courseStateChanged", true);
 
   const PARAMS = {method: "get", headers: {Authorization: "Bearer " + ScriptApp.getOAuthToken()}};
   var res = UrlFetchApp.fetch("https://classroom.googleapis.com/v1/courses?courseStates=ACTIVE&studentId=me&fields=courses/name", PARAMS);
@@ -89,14 +98,22 @@ function initialize() {
     courseList[x] = response[x].name; 
   }
 
+  // EFFICIENCY
+  // DELETE
   // Delete previously stored courses
-  for (let x of regularPeriodPropKeys()) {
+  for (let x of propKeys(brebeufSchedule5754929.REGULAR_PREFIX)) {
+    userProperties.deleteProperty(x);
+  }
+  for (let x of propKeys(brebeufSchedule5754929.IRREGULAR_PERIOD_PREFIX)) {
+    userProperties.deleteProperty(x);
+  }
+  for (let x of propKeys(brebeufSchedule5754929.IRREGULAR_PRT_PREFIX)) {
     userProperties.deleteProperty(x);
   }
 
   for (let y in courseList) {
     var subject = infoFromCourseName(courseList[y]);
-    userProperties.setProperty(REGULAR_PREFIX+subject.name.toString(), JSON.stringify(subject));
+    userProperties.setProperty(brebeufSchedule5754929.REGULAR_PREFIX+subject.name.toString(), JSON.stringify(subject));
   }
 
   var toHomePage = CardService.newNavigation().popToNamedCard("homePage").updateCard(homePage());
@@ -108,11 +125,13 @@ function initialize() {
     .build();
 }
 
+function sortIrregularPerCourses() {
 
+}
 // Take all existing in user properties and return their names, sorted by their entered period numbers if available, else sorted by alphabetical order
-function sortCourses() {
+function sortRegularCourses() {
   // JSON?
-  var courseProperties = getRegularPeriodProp();
+  var courseProperties = getProps(brebeufSchedule5754929.REGULAR_PREFIX);
 
   var periodNull = [];
   var periodExisting = [];
@@ -153,6 +172,8 @@ function sortCourses() {
   return courseList;
 }
 
+
+
 // MATCH COLOR OF EVENTS TO CLASSROOM
 // SELECT?
 // Create buttons that can be checked on to view detailed info about classes
@@ -186,15 +207,16 @@ function createToCardButtonSet(name) {
   return buttonSet;
 }
 
+// CONVERT COURSE OUTSIDE?
 // NAME OR PROPERTY?
 function gotoCourse(e) {
-  const REGULAR_PREFIX = PropertiesService.getScriptProperties().getProperty("REGULAR_PREFIX");
   var name = e.parameters.name;  
-  var subject = JSON.parse(userProperties.getProperty(REGULAR_PREFIX+name));
+  var subject = JSON.parse(userProperties.getProperty(brebeufSchedule5754929.REGULAR_PREFIX+name));
   subject = Object.assign(new Regular_Period(), subject);
   var status = name.toString();
 
   const REG_UNSELECTED_OPTION = "No selection found. Select an option.";
+  // NEED CONST?
 
   var navUi = CardService.newNavigation().pushCard(subject.build(status, REG_UNSELECTED_OPTION));
   return CardService.newActionResponseBuilder()
@@ -204,9 +226,8 @@ function gotoCourse(e) {
 
 // COMBINE THE TWO?
 function createCourse() {
-  const NULL_STRING = "!nullnullnullnullnullnullnullnullnullnull!";
   var subject = new Regular_Period("", null, null, null);
-  var status = NULL_STRING;
+  var status = brebeufSchedule5754929.NULL_STRING;
 
   // CANNOT PASS NULL VAL AS E.PARAMETERS ?
   var uiNull = CardService.newNavigation().pushCard(subject.build(status));
@@ -250,7 +271,7 @@ function infoFromCourseName(courseName) {
       break periodLoop;
     }
   }
-  if (periodNum == NaN || periodNum == " " || periodNum == null) periodNum = null;
+  if (isNaN(periodNum) || periodNum == " " || periodNum == null) periodNum = null;
   else {
     periodNum = parseInt(periodNum, 10);
     if (periodNum < 1 || periodNum > 8) periodNum = null;
@@ -278,19 +299,12 @@ function infoFromCourseName(courseName) {
 // DIFFERENT FUNCTION? REPEATED
 // SCRIPT PROPERTY
 
+// CONSIST OR EFFICIENT?
 // Update course info in user properties according to user input
 function updateCourseInfo(e) {
-  const USER_PREFIX = PropertiesService.getScriptProperties().getProperty("USER_PREFIX");
-  const REGULAR_PREFIX = PropertiesService.getScriptProperties().getProperty("REGULAR_PREFIX");
-  const IRR_PER_PREFIX = PropertiesService.getScriptProperties().getProperty("IRREGULAR_PERIOD_PREFIX");
-  const IRR_PRT_PREFIX = PropertiesService.getScriptProperties().getProperty("IRREGULAR_PRT_PREFIX");
-  const NULL_STRING = "!nullnullnullnullnullnullnullnullnullnull!";
-  const REG = "Regular_Period";
-  const IRR_PER = "Irregular_Period";
-  const IRR_PRT = "Irregular_PRT";
 
-  userProperties.setProperty(USER_PREFIX+"courseStateChanged", true);
-  var type = e.parameters.type;
+  userProperties.setProperty(brebeufSchedule5754929.USER_PREFIX+"courseStateChanged", true);
+  var identifier = e.parameters.identifier;
 
   function throwErr(errPosition = "each field") {
     var errMessage = `Please make sure ${errPosition} is filled out correctly.`;
@@ -313,7 +327,7 @@ function updateCourseInfo(e) {
       if (prt == "null") throwErr("the PRT");
     }
 
-    if (type == REG || type == IRR_PER) {
+    if (identifier == brebeufSchedule5754929.REGULAR_PREFIX || identifier == IRREGULAR_PERIOD_PREFIX) {
       var periodInput = e.commonEventObject.formInputs.period_input;
       if (periodInput === undefined) throwErr("the period number");
       else {
@@ -329,7 +343,7 @@ function updateCourseInfo(e) {
       }
     }
 
-    if (type == IRR_PER || type == IRR_PRT) {
+    if (identifier == brebeufSchedule5754929.IRREGULAR_PERIOD_PREFIX || identifier == IRREGULAR_PRT_PREFIX) {
       var dayInput = e.commonEventObject.formInputs.day_input;
       if (dayInput === undefined) throwErr("the day"); 
       // MESSAGE?
@@ -339,7 +353,7 @@ function updateCourseInfo(e) {
       }
     }
 
-    if (type == IRR_PRT) {
+    if (identifier == brebeufSchedule5754929.IRREGULAR_PRT_PREFIX) {
       var amPmInput = e.commonEventObject.formInputs.ampm_input;
       if (amPmInput === undefined) throwErr("the time");
       else {
@@ -365,23 +379,28 @@ function updateCourseInfo(e) {
   period = parseInt(period, 10);
   day = parseInt(day, 10);
   // HERE
-  if (status !== NULL_STRING) {
-    if (type == REG) userProperties.deleteProperty(REGULAR_PREFIX+status);
-    if (type == IRR_PER) userProperties.deleteProperty(IRR_PER_PREFIX+status);
-    if (type == IRR_PRT) userProperties.deleteProperty(IRR_PRT_PREFIX+status);
-  }
 
-  if (type == REG) {
-    var course = new Regular_Period(name, period, prt, lunch);
-    userProperties.setProperty(REGULAR_PREFIX+course.name, JSON.stringify(course));
+
+  if (status !== brebeufSchedule5754929.NULL_STRING) {
+    if (identifier == brebeufSchedule5754929.REGULAR_PREFIX) userProperties.deleteProperty(brebeufSchedule5754929.REGULAR_PREFIX+status);
+    else if (identifier == brebeufSchedule5754929.IRREGULAR_PERIOD_PREFIX) userProperties.deleteProperty(brebeufSchedule5754929.IRREGULAR_PERIOD_PREFIX+status);
+    else if (identifier == brebeufSchedule5754929.IRREGULAR_PRT_PREFIX) userProperties.deleteProperty(brebeufSchedule5754929.IRREGULAR_PRT_PREFIX+status);
+    // ELSE?
   }
-  if (type == IRR_PER) {
-    var course = new Irregular_Period(name, period, prt, lunch, day);
-    userProperties.setProperty(IRR_PER_PREFIX+course.name, JSON.stringify(course));
-  }
-  if (type == IRR_PRT) {
-    var course = new Irregular_PRT(name, prt, day, amPm);
-    userProperties.setProperty(IRR_PRT_PREFIX+course.name, JSON.stringify(course));
+  // PREFIX
+
+  var course;
+  if (identifier == brebeufSchedule5754929.REGULAR_PREFIX) {
+    course = new Regular_Period(name, period, prt, lunch);
+    userProperties.setProperty(brebeufSchedule5754929.REGULAR_PREFIX+course.name, JSON.stringify(course));
+  } 
+  else if (identifier == brebeufSchedule5754929.IRREGULAR_PERIOD_PREFIX) {
+    course = new Irregular_Period(name, period, prt, lunch, day);
+    userProperties.setProperty(brebeufSchedule5754929.IRREGULAR_PERIOD_PREFIX+course.name, JSON.stringify(course));
+  } 
+  else if (identifier == brebeufSchedule5754929.IRREGULAR_PRT_PREFIX) {
+    course = new Irregular_PRT(name, prt, day, amPm);
+    userProperties.setProperty(brebeufSchedule5754929.IRREGULAR_PRT_PREFIX+course.name, JSON.stringify(course));
   }
 
   var toHomePage = CardService.newNavigation().popToNamedCard("homePage").updateCard(homePage());
@@ -393,17 +412,22 @@ function updateCourseInfo(e) {
 }
 
 // START HERE TOMORROW 2021.5.18
+// CREATING IRREGULAR EVENTS DO NOT WORK YET
 
 // Delete course info from user properties from course page
 function deleteCourse(e) {
-  const USER_PREFIX = PropertiesService.getScriptProperties().getProperty("USER_PREFIX");
-  const REGULAR_PREFIX = PropertiesService.getScriptProperties().getProperty("REGULAR_PREFIX");
-  const NULL_STRING = "!nullnullnullnullnullnullnullnullnullnull!";
+  
+  // SCRIPT PROPERTY? PREFIX?
 
-  userProperties.setProperty(USER_PREFIX+"courseStateChanged", true);
+  userProperties.setProperty(brebeufSchedule5754929.USER_PREFIX+"courseStateChanged", true);
   var status = e.parameters.status;
 
-  if (status !== NULL_STRING) userProperties.deleteProperty(REGULAR_PREFIX+status);
+  if (status !== brebeufSchedule5754929.NULL_STRING) {
+    if (identifier == brebeufSchedule5754929.REGULAR_PREFIX) userProperties.deleteProperty(brebeufSchedule5754929.REGULAR_PREFIX+status);
+    else if (identifier == brebeufSchedule5754929.IRREGULAR_PERIOD_PREFIX) userProperties.deleteProperty(brebeufSchedule5754929.IRREGULAR_PERIOD_PREFIX+status);
+    else if (identifier == brebeufSchedule5754929.IRREGULAR_PRT_PREFIX) userProperties.deleteProperty(brebeufSchedule5754929.IRREGULAR_PRT_PREFIX+status);
+    // ELSE?
+  }
   
   var toHomePage = CardService.newNavigation().popToNamedCard("homePage").updateCard(homePage());
   return CardService.newActionResponseBuilder()
@@ -415,11 +439,10 @@ function deleteCourse(e) {
 
 // Delete course from user properties from home page
 function deleteCourseFromMenu(e) {
-  const USER_PREFIX = PropertiesService.getScriptProperties().getProperty("USER_PREFIX");
-  const REGULAR_PREFIX = PropertiesService.getScriptProperties().getProperty("REGULAR_PREFIX");
-  userProperties.setProperty(USER_PREFIX+"courseStateChanged", true);
+  
+  userProperties.setProperty(brebeufSchedule5754929.USER_PREFIX+"courseStateChanged", true);
   var subject = e.parameters.name;
-  userProperties.deleteProperty(REGULAR_PREFIX+subject);
+  userProperties.deleteProperty(brebeufSchedule5754929.REGULAR_PREFIX+subject);
   var updateHomePage = CardService.newNavigation().updateCard(homePage());
   return CardService.newActionResponseBuilder()
     .setNavigation(updateHomePage)

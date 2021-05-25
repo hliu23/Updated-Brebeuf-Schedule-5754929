@@ -25,7 +25,9 @@ function setScriptProperties() {
     "IRREGULAR_PRT_PREFIX" : "IRR_PRT_",
 
     "COLOR_MAIN" : "#761113",
-    "COLOR_ALT" : "#DEAC3F"
+    "COLOR_ALT" : "#DEAC3F",
+
+    "NULL_STRING" : "!nullnullnullnullnullnullnullnullnullnull!"
   });
 }
 
@@ -37,15 +39,14 @@ function cleanScriptProperties() {
 
 
 function update() {
-  const USER_PREFIX = PropertiesService.getScriptProperties().getProperty("USER_PREFIX");
   const CURRENT_VERSION = "2021-05-07-2";
-  var version = userProperties.getProperty(USER_PREFIX+"version");
+  var version = userProperties.getProperty(brebeufSchedule5754929.USER_PREFIX+"version");
   if (version == null || version != CURRENT_VERSION) {
     // Updates
     // KEEP PROPERTIES
     userProperties.deleteAllProperties();
   }
-  userProperties.setProperty(USER_PREFIX+"version", CURRENT_VERSION);
+  userProperties.setProperty(brebeufSchedule5754929.USER_PREFIX+"version", CURRENT_VERSION);
 }
 
 function underMaintenance(estimatedTimeUp = null) {

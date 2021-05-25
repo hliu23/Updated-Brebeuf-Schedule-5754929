@@ -9,10 +9,10 @@
 // GENERATE DATE (POSSIBLE RANGE)
 
 var requests = [];
-
+// BUG?
 // Check that course info are entered as expected (do not allow proceeding until issue fixed)
 function checkEvents() {
-  var courseProperties = getRegularPeriodProp();
+  var courseProperties = getProps(brebeufSchedule5754929.REGULAR_PREFIX);
 
   try {
     var periodNum = [];
@@ -33,7 +33,6 @@ function checkEvents() {
         throw new Error("Please make sure \"" + courseName + "\" has a lunch letter.");
       }
     }
-
     
     var setPeriodNum = [...new Set(periodNum)];
     if (periodNum.length > setPeriodNum.length) {
@@ -49,11 +48,10 @@ function checkEvents() {
 
 // Create calendar in user's calendar if it has not been created or if the user has made any changes to course info since last run
 function createCalendar(schedule) {
-  const USER_PREFIX = PropertiesService.getScriptProperties.getProperty("USER_PREFIX");
   try {
-    var courseStateChanged = userProperties.getProperty(USER_PREFIX+"courseStateChanged");
-    var calProperty = userProperties.getProperty(USER_PREFIX+"calendarId");
-    
+    var courseStateChanged = userProperties.getProperty(brebeufSchedule5754929.USER_PREFIX+"courseStateChanged");
+    var calProperty = userProperties.getProperty(brebeufSchedule5754929.USER_PREFIX+"calendarId");
+
     var resCode = 0;
 
     const PARAMS = {method: "get", headers: {Authorization: "Bearer " + ScriptApp.getOAuthToken()}, muteHttpExceptions: true};
@@ -66,13 +64,13 @@ function createCalendar(schedule) {
         summary: "A calendar with scheduled personalized reminders at Brebeuf class time.",
         timeZone: "America/New_York"
       });
-      calendar.setColor(PropertiesService.getScriptProperties().getProperty("COLOR_MAIN"));
+      calendar.setColor(brebeufSchedule5754929.COLOR_MAIN);
 
       calId = calendar.getId();
 
-      userProperties.setProperty(USER_PREFIX+"calendarId", calId);
+      userProperties.setProperty(brebeufSchedule5754929.USER_PREFIX+"calendarId", calId);
       if (resCode != 200 || courseStateChanged == "true") {
-        userProperties.deleteProperty(USER_PREFIX+"lastCompletedDate");
+        userProperties.deleteProperty(brebeufSchedule5754929.USER_PREFIX+"lastCompletedDate");
       }
       
     } else calId = calProperty;
@@ -81,7 +79,7 @@ function createCalendar(schedule) {
   }
   catch (err) {
     console.log(err);
-    return newNotify("Calendar creation failed. Please refresh the page. If error persists, report through \"Feedback\" feature in the menu.");
+    return newNotify("Calendar creation failed. Please refresh the page. If the error persists, report through \"Feedback\" feature in the menu.");
   }
 }
 
@@ -96,7 +94,7 @@ function eventsCard(calId, schedule) {
       .setFunctionName("createEvents")
       .setParameters({calId: calId, schedule: JSON.stringify(schedule)}))
     .setTextButtonStyle(CardService.TextButtonStyle.FILLED)
-    .setBackgroundColor(PropertiesService.getScriptProperties().getProperty("COLOR_MAIN"));
+    .setBackgroundColor(brebeufSchedule5754929.COLOR_MAIN);
 
   var section = CardService.newCardSection()
     .addWidget(explanation)
@@ -111,12 +109,12 @@ function eventsCard(calId, schedule) {
 
 // Create event requests and push into the global variable "requests"
 function createEvents(e) {
-  const USER_PREFIX = PropertiesService.getScriptProperties().getProperty("USER_PREFIX");
+
   console.time("createEvents");
   var calId = e.parameters.calId;
   var schedule = JSON.parse(e.parameters.schedule);
   
-  var lastDate = userProperties.getProperty(USER_PREFIX+"lastCompletedDate");
+  var lastDate = userProperties.getProperty(brebeufSchedule5754929.USER_PREFIX+"lastCompletedDate");
   var startDate;
   if (lastDate == null) {
     startDate = new Date();
@@ -131,20 +129,20 @@ function createEvents(e) {
 
   if (brebeufDay(startDate) == 8) {
     createEventsOfDay(calId, schedule, startDate);
-    userProperties.setProperty(USER_PREFIX+"lastCompletedDate", msCurrentDate);
+    userProperties.setProperty(brebeufSchedule5754929.USER_PREFIX+"lastCompletedDate", msCurrentDate);
     currentDate.setDate(currentDate.getDate() + 1);
   }
 
   while (brebeufDay(currentDate) !== 8) {
     createEventsOfDay(calId, schedule, currentDate);
     msCurrentDate = Date.parse(currentDate);
-    userProperties.setProperty(USER_PREFIX+"lastCompletedDate", msCurrentDate);
+    userProperties.setProperty(brebeufSchedule5754929.USER_PREFIX+"lastCompletedDate", msCurrentDate);
     currentDate.setDate(currentDate.getDate() + 1);
   }
 
   createEventsOfDay(calId, schedule, currentDate);
   msCurrentDate = Date.parse(currentDate);
-  userProperties.setProperty(USER_PREFIX+"lastCompletedDate", msCurrentDate);
+  userProperties.setProperty(brebeufSchedule5754929.USER_PREFIX+"lastCompletedDate", msCurrentDate);
     
   batchRequests();
   console.timeEnd("createEvents");
